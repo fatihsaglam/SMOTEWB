@@ -10,7 +10,7 @@
 #' lesser noises for that class. By default,  \eqn{2\times n_{neg}/n} for positive and
 #' \eqn{2\times n_{pos}/n} for negative class.
 #' @param k_max to increase maximum number of neighbors. It is
-#' \code{ceiling(n_neg/n_pos)} by default
+#' \code{ceiling(n_neg/n_pos)} by default.
 #' @param ... additional inputs for ada::ada().
 #'
 #' @details
