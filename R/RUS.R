@@ -35,25 +35,25 @@
 
 RUS <- function(x, y) {
   x <- as.matrix(x)
-  n <- length(y)
-  p <- ncol(x)
+  # n <- length(y)
+  # p <- ncol(x)
 
   class_names <- as.character(unique(y))
   class_pos <- names(which.min(table(y)))
   class_neg <- class_names[class_names != class_pos]
 
-  x_pos <- x[y == class_pos,]
-  x_neg <- x[y == class_neg,]
+  x_pos <- x[y == class_pos,,drop = FALSE]
+  x_neg <- x[y == class_neg,,drop = FALSE]
 
   n_pos <- nrow(x_pos)
   n_neg <- nrow(x_neg)
 
-  imb_ratio <- n_neg/n_pos
+  # imb_ratio <- n_neg/n_pos
   n_remove <- (n_neg - n_pos)
 
   i_remove <- sample(1:n_neg, n_remove)
 
-  x_neg_new <- x_neg[-i_remove,]
+  x_neg_new <- x_neg[-i_remove,,drop = FALSE]
 
   x_new <- rbind(
     x_pos,

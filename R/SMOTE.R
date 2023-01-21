@@ -23,6 +23,7 @@
 #'
 #' @importFrom  FNN knnx.index
 #' @importFrom  stats runif
+#' @importFrom  stats sd
 #'
 #' @references
 #' Chawla, N. V., Bowyer, K. W., Hall, L. O., & Kegelmeyer, W. P. (2002). SMOTE:
@@ -49,25 +50,25 @@
 
 SMOTE <- function(x, y, k = 5) {
 
+  var_names <- colnames(x)
   x <- as.matrix(x)
   n <- length(y)
   p <- ncol(x)
 
   # scaling
-  maxs <- c()
-  mins <- c()
-  for (i in 1:p) {
-    maxs[i] <- max(x[,i])
-    mins[i] <- min(x[,i])
-    x[,i] <- (x[,i] - mins[i])/(maxs[i] - mins[i])
-  }
+  means <- apply(x, 2, mean)
+  sds <- apply(x, 2, sd) + 1e-7
+  x <- sapply(1:p, function(m) {
+    (x[,m] - means[m])/sds[m]
+  })
+  colnames(x) <- var_names
 
   class_names <- as.character(unique(y))
   class_pos <- names(which.min(table(y)))
   class_neg <- class_names[class_names != class_pos]
 
-  x_pos <- x[y == class_pos,]
-  x_neg <- x[y == class_neg,]
+  x_pos <- x[y == class_pos,,drop = FALSE]
+  x_neg <- x[y == class_neg,,drop = FALSE]
 
   n_pos <- nrow(x_pos)
   n_neg <- nrow(x_neg)
@@ -89,13 +90,15 @@ SMOTE <- function(x, y, k = 5) {
   # synthetic data generation
   x_syn <- matrix(nrow = 0, ncol = p)
   for (i in 1:n_pos) {
+    if (C[i] == 0) {
+      next
+    }
     NN_i <- NN[i,]
     i_k <- sample(1:k, C[i], replace = TRUE)
     lambda <- runif(C[i])
     kk <- x_pos[NN_i,,drop = FALSE]
     kk <- kk[i_k,]
-    x_pos_i_temp <- t(replicate(C[i],
-                                x_pos[i,]))
+    x_pos_i_temp <- x_pos[rep(i, C[i]),,drop = FALSE]
     x_syn_step <- x_pos_i_temp + (kk - x_pos_i_temp)*lambda
     x_syn <- rbind(x_syn, x_syn_step)
   }
@@ -112,9 +115,10 @@ SMOTE <- function(x, y, k = 5) {
   y_new <- factor(y_new, levels = levels(y), labels = levels(y))
 
   # descaling
-  for (i in 1:p) {
-    x_new[,i] <- x_new[,i]*(maxs[i] - mins[i]) + mins[i]
-  }
+  x_new <- sapply(1:p, function(m) {
+    x_new[,m]*sds[m] + means[m]
+  })
+  colnames(x_new) <- var_names
 
   return(list(
     x_new = x_new,

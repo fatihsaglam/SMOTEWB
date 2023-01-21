@@ -37,15 +37,13 @@
 ROS <- function(x, y) {
 
   x <- as.matrix(x)
-  n <- length(y)
-  p <- ncol(x)
 
   class_names <- as.character(unique(y))
   class_pos <- names(which.min(table(y)))
   class_neg <- class_names[class_names != class_pos]
 
-  x_pos <- x[y == class_pos,]
-  x_neg <- x[y == class_neg,]
+  x_pos <- x[y == class_pos,,drop = FALSE]
+  x_neg <- x[y == class_neg,,drop = FALSE]
 
   n_pos <- nrow(x_pos)
   n_neg <- nrow(x_neg)
@@ -53,23 +51,24 @@ ROS <- function(x, y) {
   imb_ratio <- n_neg/n_pos
   n_new <- (n_neg - n_pos)
 
-  i_new <- rep(1:n_pos, ceiling(imb_ratio) - 1)
+  # resampling
+  C <- rep(floor(imb_ratio - 1), n_pos)
 
   # exact balance
-  n_diff <- (n_new - length(i_new))
-
+  n_diff <- (n_new - sum(C))
   i_diff <- sample(1:n_pos, n_diff)
-  n_diff[i_diff] <- n_diff[i_diff] + n_diff/abs(n_diff)
+  C[i_diff] <- C[i_diff] + 1
+  i_new <- rep(1:n_pos, C)
 
-  x_new <- x_pos[i_new,]
+  x_ROS <- x_pos[i_new,]
 
   x_new <- rbind(
-    x_new,
+    x_ROS,
     x_pos,
     x_neg
   )
   y_new <- c(
-    rep(class_pos, n_new + n_pos),
+    rep(class_pos, length(i_new) + n_pos),
     rep(class_neg, n_neg)
   )
   y_new <- factor(y_new, levels = levels(y), labels = levels(y))

@@ -13,13 +13,11 @@ SMOTEWB(x, y, n_weak_classifier = 100, class_weights = NULL, k_max = NULL, ...)
 
 \item{n_weak_classifier}{number of weak classifiers for boosting.}
 
-\item{class_weights}{numeric vector of length two. First number is for
-positive class, and second is for negative. Higher the relative weight,
-lesser noises for that class. By default,  \eqn{2\times n_{neg}/n} for positive and
+\item{class_weights}{numeric vector of length two. First number is for positive class, and second is for negative. Higher the relative weight, lesser noises for that class. By default,  \eqn{2\times n_{neg}/n} for positive and
 \eqn{2\times n_{pos}/n} for negative class.}
 
 \item{k_max}{to increase maximum number of neighbors. It is
-\code{ceiling(n_neg/n_pos)} by default}
+\code{ceiling(n_neg/n_pos)} by default.}
 
 \item{...}{additional inputs for ada::ada().}
 }
@@ -35,13 +33,10 @@ a list with resampled dataset.
 Resampling with SMOTE with boosting.
 }
 \details{
-SMOTEWB (Saglam & Cengiz, 2022) is a SMOTE-based oversampling method which can
-handle noisy data and adaptively decides the appropriate number of neighbors
+SMOTEWB (Saglam & Cengiz, 2022) is a SMOTE-based oversampling method which can handle noisy data and adaptively decides the appropriate number of neighbors
 to link during resampling with SMOTE.
 
-This function first scales features into [0-1] range then applies resampling.
-Descaling is based on minimum and maximum values of original dataset
-features. This is to detect better nearest neighbours.
+This function first scales features into [0-1] range then applies resampling. Descaling is based on minimum and maximum values of original dataset features. This is to detect better nearest neighbours.
 }
 \examples{
 
