@@ -48,7 +48,6 @@ RUS <- function(x, y) {
   n_pos <- nrow(x_pos)
   n_neg <- nrow(x_neg)
 
-  # imb_ratio <- n_neg/n_pos
   n_remove <- (n_neg - n_pos)
 
   i_remove <- sample(1:n_neg, n_remove)

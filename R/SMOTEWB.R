@@ -94,18 +94,12 @@ SMOTEWB <- function(
   w_neg <- w[y == class_neg]
 
   if (is.null(class_weights)) {
-    # wclass_pos <- 2*n_neg/n
-    # wclass_neg <- 2*n_pos/n
-
     wclass_pos <- n/n_pos*0.5
     wclass_neg <- n/n_neg*0.5
   } else {
     wclass_pos <- class_weights[1]
     wclass_neg <- class_weights[2]
   }
-
-  # wclass_neg <- 2*wclass_neg/(wclass_neg + wclass_pos)
-  # wclass_pos <- 2*wclass_pos/(wclass_neg + wclass_pos)
 
   T_pos <- (1/n)*wclass_pos
   T_neg <- (1/n)*wclass_neg
@@ -185,8 +179,8 @@ SMOTEWB <- function(
   x_syn <- matrix(nrow = 0, ncol = p)
   for (i in 1:n_pos) {
     if (fl[i] == "lonely") {
-      x_syn_step <- t(replicate(C[i],
-                                x_pos[i,]))
+      i_step <- rep(i, C[i])
+      x_syn_step <- x_pos[i_step,]
       x_syn <- rbind(x_syn, x_syn_step)
     }
     if (fl[i] == "good") {

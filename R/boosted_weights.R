@@ -25,30 +25,22 @@
 
 boosted_weights <- function(x, y, n_iter = 100) {
   n <- nrow(x)
-  p <- ncol(x)
-
   w <- rep(1/n, n)
 
   for (i in 1:n_iter) {
 
     dat <- data.frame(x, y = y)
-    # Train decision tree model using ranger with current weights
     model <- rpart::rpart(y~., data = dat,
                           weights = w,
-                          control = rpart::rpart.control(minsplit = 3, cp = 0.01, maxdepth = 30)) # rpart
+                          control = rpart::rpart.control(minsplit = 3, cp = 0.01, maxdepth = 30))
 
-    # Make predictions on training data
-    preds <- predict(model, data = x, type = "class") # rpart
+    preds <- predict(model, data = x, type = "class")
 
-    # Calculate error rate
     w_error <- sum(w[preds != y])
-    # Calculate model weight
     alpha <- 0.5 * log((1 - w_error) / w_error)
 
-    # Update weights for misclassified observations
     w[preds != y] <- w[preds != y] * exp(alpha)
 
-    # Normalize weights
     w <- w / sum(w)
   }
   return(w)
