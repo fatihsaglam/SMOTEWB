@@ -52,7 +52,7 @@ SMOTE <- function(x, y, k = 5) {
 
   var_names <- colnames(x)
   x <- as.matrix(x)
-  n <- length(y)
+  # n <- length(y)
   p <- ncol(x)
 
   # scaling
@@ -74,7 +74,7 @@ SMOTE <- function(x, y, k = 5) {
   n_neg <- nrow(x_neg)
 
   imb_ratio <- n_neg/n_pos
-
+  k <- min(k, n_pos - 1)
   NN <- FNN::knnx.index(data = x_pos, query = x_pos, k = k + 1)[, -1]
 
   # number of synthetic sample per observation
@@ -123,6 +123,7 @@ SMOTE <- function(x, y, k = 5) {
   return(list(
     x_new = x_new,
     y_new = y_new,
+    x_syn = x_new[1:n_syn,, drop = FALSE],
     C = C
   ))
 
