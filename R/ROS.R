@@ -29,13 +29,23 @@
 #'
 #' plot(m$x_new, col = m$y_new)
 #'
-#'
 #' @rdname ROS
 #' @export
 
 
 ROS <- function(x, y) {
 
+  if (is.data.frame(x)) {
+    x <- as.matrix(x)
+  }
+
+  if (!is.data.frame(x) & !is.matrix(x)) {
+    stop("x must be a matrix or dataframe")
+  }
+
+  if (!is.factor(y)) {
+    stop("y must be a factor")
+  }
   x <- as.matrix(x)
 
   class_names <- as.character(unique(y))
@@ -51,10 +61,8 @@ ROS <- function(x, y) {
   imb_ratio <- n_neg/n_pos
   n_new <- (n_neg - n_pos)
 
-  # resampling
   C <- rep(floor(imb_ratio - 1), n_pos)
 
-  # exact balance
   n_diff <- (n_new - sum(C))
   i_diff <- sample(1:n_pos, n_diff)
   C[i_diff] <- C[i_diff] + 1

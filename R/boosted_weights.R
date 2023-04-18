@@ -1,4 +1,4 @@
-#' @title  ,Boosted Weights for SMOTE with Boosting (SMOTEWB)
+#' @title Boosted Weights for SMOTE with Boosting (SMOTEWB)
 #'
 #' @description Calculation of Boosted Weights for SMOTE with Boosting (SMOTEWB).
 #'
@@ -18,21 +18,21 @@
 #' @importFrom stats predict
 #'
 #' @references
-#' Freund, Y., & Schapire, R. E. (1996, July). Experiments with a new boosting algorithm. In icml (Vol. 96, pp. 148-156).
+#' Freund, Y., & Schapire, R. E. (1996, July). Experiments with a new boosting
+#' algorithm. In icml (Vol. 96, pp. 148-156).
 #'
 #' @noRd
-
 
 boosted_weights <- function(x, y, n_iter = 100) {
   n <- nrow(x)
   w <- rep(1/n, n)
 
   for (i in 1:n_iter) {
-
     dat <- data.frame(x, y = y)
-    model <- rpart::rpart(y~., data = dat,
-                          weights = w,
-                          control = rpart::rpart.control(minsplit = 3, cp = 0.01, maxdepth = 30))
+    model <- rpart::rpart(
+      y~., data = dat,
+      weights = w,
+      control = rpart::rpart.control(minsplit = 3, cp = 0.01, maxdepth = 30))
 
     preds <- predict(model, data = x, type = "class")
 

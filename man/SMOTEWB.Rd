@@ -16,8 +16,8 @@ SMOTEWB(x, y, n_weak_classifier = 100, class_weights = NULL, k_max = NULL, ...)
 \item{class_weights}{numeric vector of length two. First number is for positive class, and second is for negative. Higher the relative weight, lesser noises for that class. By default,  \eqn{2\times n_{neg}/n} for positive and
 \eqn{2\times n_{pos}/n} for negative class.}
 
-\item{k_max}{to increase maximum number of neighbors. It is
-\code{ceiling(n_neg/n_pos)} by default.}
+\item{k_max}{to increase maximum number of neighbors. Default is
+\code{ceiling(n_neg/n_pos)}.}
 
 \item{...}{additional inputs for ada::ada().}
 }
@@ -25,6 +25,7 @@ SMOTEWB(x, y, n_weak_classifier = 100, class_weights = NULL, k_max = NULL, ...)
 a list with resampled dataset.
  \item{x_new}{Resampled feature matrix.}
  \item{y_new}{Resampled target variable.}
+ \item{x_syn}{Generated synthetic data.}
  \item{w}{Boosting weights for original dataset.}
  \item{k}{Number of nearest neighbors for positive class samples.}
  \item{C}{Number of synthetic samples for each positive class samples.}

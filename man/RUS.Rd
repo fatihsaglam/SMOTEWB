@@ -37,7 +37,6 @@ m <- RUS(x = x, y = y)
 
 plot(m$x_new, col = m$y_new)
 
-
 }
 \author{
 Fatih Saglam, saglamf89@gmail.com

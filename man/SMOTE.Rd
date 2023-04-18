@@ -11,12 +11,13 @@ SMOTE(x, y, k = 5)
 
 \item{y}{a factor class variable with two classes.}
 
-\item{k}{number of neighbors.}
+\item{k}{number of neighbors. Default is 5.}
 }
 \value{
 a list with resampled dataset.
  \item{x_new}{Resampled feature matrix.}
  \item{y_new}{Resampled target variable.}
+ \item{x_syn}{Generated synthetic data.}
  \item{C}{Number of synthetic samples for each positive class samples.}
 }
 \description{
@@ -29,6 +30,8 @@ samples along that link.
 
 It is well known that SMOTE is sensitive to noisy data. It may create more
 noise.
+
+Note: Much faster than \code{smotefamily::SMOTE()}.
 }
 \examples{
 

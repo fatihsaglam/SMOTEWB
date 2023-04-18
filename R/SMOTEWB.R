@@ -7,8 +7,8 @@
 #' @param n_weak_classifier number of weak classifiers for boosting.
 #' @param class_weights numeric vector of length two. First number is for positive class, and second is for negative. Higher the relative weight, lesser noises for that class. By default,  \eqn{2\times n_{neg}/n} for positive and
 #' \eqn{2\times n_{pos}/n} for negative class.
-#' @param k_max to increase maximum number of neighbors. It is
-#' \code{ceiling(n_neg/n_pos)} by default.
+#' @param k_max to increase maximum number of neighbors. Default is
+#' \code{ceiling(n_neg/n_pos)}.
 #' @param ... additional inputs for ada::ada().
 #'
 #' @details
@@ -20,6 +20,7 @@
 #' @return a list with resampled dataset.
 #'  \item{x_new}{Resampled feature matrix.}
 #'  \item{y_new}{Resampled target variable.}
+#'  \item{x_syn}{Generated synthetic data.}
 #'  \item{w}{Boosting weights for original dataset.}
 #'  \item{k}{Number of nearest neighbors for positive class samples.}
 #'  \item{C}{Number of synthetic samples for each positive class samples.}
@@ -34,7 +35,6 @@
 #' Sağlam, F., & Cengiz, M. A. (2022). A novel SMOTE-based resampling technique
 #' trough noise detection and the boosting procedure. Expert Systems with
 #' Applications, 200, 117023.
-#'
 #'
 #' @examples
 #'
@@ -62,18 +62,22 @@ SMOTEWB <- function(
     k_max = NULL,
     ...) {
 
+  if (!is.data.frame(x) & !is.matrix(x)) {
+    stop("x must be a matrix or dataframe")
+  }
+
+  if (is.data.frame(x)) {
+    x <- as.matrix(x)
+  }
+
+  if (!is.factor(y)) {
+    stop("y must be a factor")
+  }
+
   var_names <- colnames(x)
   x <- as.matrix(x)
   n <- length(y)
   p <- ncol(x)
-
-  # scaling
-  means <- apply(x, 2, mean)
-  sds <- apply(x, 2, sd) + 1e-7
-  x <- sapply(1:p, function(m) {
-    (x[,m] - means[m])/sds[m]
-  })
-  colnames(x) <- var_names
 
   class_names <- as.character(unique(y))
   class_pos <- names(which.min(table(y)))
@@ -87,7 +91,6 @@ SMOTEWB <- function(
 
   imb_ratio <- n_neg/n_pos
 
-  # noise detection
   w <- boosted_weights(x = x, y = y, n_iter = n_weak_classifier)
 
   w_pos <- w[y == class_pos]
@@ -122,7 +125,6 @@ SMOTEWB <- function(
   x_neg_notnoise <- x_neg[nl_neg == "notnoise",,drop = FALSE]
   x_pos_notnoise <- x_pos[nl_pos == "notnoise",,drop = FALSE]
 
-  # determining the number of nearest neighbours
   if (is.null(k_max)) {
     k_max <- ceiling(imb_ratio)
   }
@@ -160,7 +162,6 @@ SMOTEWB <- function(
     }
   }
 
-  # number of synthetic sample per observation
   n_syn <- (n_neg - n_pos)
   C <- numeric(n_pos)
   n_good_and_lonely <- sum((fl == "good") + (fl == "lonely"))
@@ -169,14 +170,11 @@ SMOTEWB <- function(
       C[i] <- ceiling(n_syn/n_good_and_lonely)
     }
   }
-
-  # exact balance
   n_diff <- (n_syn - sum(C))
 
   ii <- sample(which(fl == "good" | fl == "lonely"), size = abs(n_diff))
   C[ii] <- C[ii] + n_diff/abs(n_diff)
 
-  # synthetic data generation
   x_syn <- matrix(nrow = 0, ncol = p)
   for (i in 1:n_pos) {
     if (fl[i] == "lonely") {
@@ -209,11 +207,6 @@ SMOTEWB <- function(
     rep(class_neg, n_neg)
   )
   y_new <- factor(y_new, levels = levels(y), labels = levels(y))
-
-  # descaling
-  x_new <- sapply(1:p, function(m) {
-    x_new[,m]*sds[m] + means[m]
-  })
   colnames(x_new) <- var_names
 
   return(list(

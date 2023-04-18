@@ -29,14 +29,23 @@
 #'
 #' plot(m$x_new, col = m$y_new)
 #'
-#'
 #' @rdname RUS
 #' @export
 
 RUS <- function(x, y) {
   x <- as.matrix(x)
-  # n <- length(y)
-  # p <- ncol(x)
+
+  if (is.data.frame(x)) {
+    x <- as.matrix(x)
+  }
+
+  if (!is.data.frame(x) & !is.matrix(x)) {
+    stop("x must be a matrix or dataframe")
+  }
+
+  if (!is.factor(y)) {
+    stop("y must be a factor")
+  }
 
   class_names <- as.character(unique(y))
   class_pos <- names(which.min(table(y)))
