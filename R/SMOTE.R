@@ -47,7 +47,6 @@
 #'
 #' plot(m$x_new, col = m$y_new)
 #'
-#'
 #' @rdname SMOTE
 #' @export
 

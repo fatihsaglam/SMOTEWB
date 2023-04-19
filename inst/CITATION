@@ -1,7 +1,7 @@
 citHeader("To cite SMOTEWB in publications use:")
 
-citEntry(
-  entry    = "Article",
+bibentry(
+  bibtype  = "Article",
   title    = "A novel SMOTE-based resampling technique trough noise detection and the boosting procedure",
   author   = "Sağlam, Fatih and Cengiz, Mehmet Ali",
   journal  = "Expert Systems with Applications",
