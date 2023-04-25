@@ -47,7 +47,6 @@ m <- SMOTE(x = x, y = y, k = 7)
 
 plot(m$x_new, col = m$y_new)
 
-
 }
 \references{
 Chawla, N. V., Bowyer, K. W., Hall, L. O., & Kegelmeyer, W. P. (2002). SMOTE:
