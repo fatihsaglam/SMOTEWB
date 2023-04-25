@@ -36,8 +36,6 @@ Resampling with SMOTE with boosting.
 \details{
 SMOTEWB (Saglam & Cengiz, 2022) is a SMOTE-based oversampling method which can handle noisy data and adaptively decides the appropriate number of neighbors
 to link during resampling with SMOTE.
-
-This function first scales features into [0-1] range then applies resampling. Descaling is based on minimum and maximum values of original dataset features. This is to detect better nearest neighbours.
 }
 \examples{
 

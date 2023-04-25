@@ -15,8 +15,6 @@
 #' SMOTEWB (Saglam & Cengiz, 2022) is a SMOTE-based oversampling method which can handle noisy data and adaptively decides the appropriate number of neighbors
 #' to link during resampling with SMOTE.
 #'
-#' This function first scales features into [0-1] range then applies resampling. Descaling is based on minimum and maximum values of original dataset features. This is to detect better nearest neighbours.
-#'
 #' @return a list with resampled dataset.
 #'  \item{x_new}{Resampled feature matrix.}
 #'  \item{y_new}{Resampled target variable.}
