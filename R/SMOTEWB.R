@@ -89,7 +89,7 @@ SMOTEWB <- function(
 
   imb_ratio <- n_neg/n_pos
 
-  w <- SMOTEWB:::boosted_weights(x = x, y = y, n_iter = n_weak_classifier)
+  w <- boosted_weights(x = x, y = y, n_iter = n_weak_classifier)
 
   w_pos <- w[y == class_pos]
   w_neg <- w[y == class_neg]
