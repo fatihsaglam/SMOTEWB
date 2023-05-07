@@ -4,7 +4,7 @@
 #' safe level of the nearest minority class examples.
 #'
 #' @param x feature matrix or data.frame.
-#' @param y a factor class variable.
+#' @param y a factor class variable with two classes.
 #' @param k1 number of neighbors to link. Default is 5.
 #' @param k2 number of neighbors to determine safe levels. Default is 5.
 #'

@@ -4,7 +4,7 @@
 #' datasets using ADASYN.
 #'
 #' @param x feature matrix or data.frame.
-#' @param y a factor class variable. Can be multiclass.
+#' @param y a factor class variable with two classes.
 #' @param k number of neighbors. Default is 5.
 #'
 #' @details
