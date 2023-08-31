@@ -1,3 +1,5 @@
+[![](https://cranlogs.r-pkg.org/badges/SMOTEWB)](https://cran.r-project.org/package=SMOTEWB)
+
 # SMOTEWB
 
 Sağlam and Mehmet's (2022) SMOTE with Boosting (SMOTEWB) oversampling algorithm for imbalanced datasets.
