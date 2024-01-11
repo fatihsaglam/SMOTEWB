@@ -26,7 +26,7 @@
 #'
 #' @author Fatih Saglam, saglamf89@gmail.com
 #'
-#' @importFrom  FNN knnx.index
+#' @importFrom  FNN get.knnx
 #' @importFrom  stats runif
 #' @importFrom  stats sd
 #'
