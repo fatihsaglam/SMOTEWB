@@ -14,13 +14,15 @@
 #' It is well known that SMOTE is sensitive to noisy data. It may create more
 #' noise.
 #'
+#' Can work with classes more than 2.
+#'
 #' Note: Much faster than \code{smotefamily::SMOTE()}.
 #'
 #' @return a list with resampled dataset.
 #'  \item{x_new}{Resampled feature matrix.}
 #'  \item{y_new}{Resampled target variable.}
-#'  \item{x_syn}{Generated synthetic data.}
-#'  \item{C}{Number of synthetic samples for each positive class samples.}
+#'  \item{x_syn}{Generated synthetic feature data.}
+#'  \item{y_syn}{Generated synthetic label data.}
 #'
 #' @author Fatih Saglam, saglamf89@gmail.com
 #'
@@ -75,61 +77,48 @@ SMOTE <- function(x, y, k = 5) {
   var_names <- colnames(x)
   x <- as.matrix(x)
   p <- ncol(x)
+  n <- nrow(x)
 
-  class_names <- as.character(unique(y))
-  class_pos <- names(which.min(table(y)))
-  class_neg <- class_names[class_names != class_pos]
+  class_names <- levels(y)
+  n_classes <- sapply(class_names, function(m) sum(y == m))
+  k_class <- length(class_names)
+  n_classes_max <- max(n_classes)
+  n_needed <- n_classes_max - n_classes
+  x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
+  x_syn_list <- list()
 
-  x_pos <- x[y == class_pos,,drop = FALSE]
-  x_neg <- x[y == class_neg,,drop = FALSE]
+  for (i in 1:k_class) {
+    counter <- 0
+    NN_main2main <- FNN::get.knnx(data = x_classes[[i]], query = x_classes[[i]], k = k + 1)$nn.index[,-1]
+    x_main <- x_classes[[i]]
 
-  n_pos <- nrow(x_pos)
-  n_neg <- nrow(x_neg)
+    x_syn_list[[i]] <- matrix(data = NA, nrow = 0, ncol = p)
+    while (TRUE) {
+      if (counter == n_needed[i]) {
+        break
+      }
+      counter <- counter + 1
 
-  imb_ratio <- n_neg/n_pos
-  k <- min(k, n_pos - 1)
-  NN <- FNN::knnx.index(data = x_pos, query = x_pos, k = k + 1)[, -1]
+      i_sample <- sample(1:n_classes[i], size = 1)
+      x_main_selected <- x_main[i_sample,,drop = FALSE]
+      x_target <- x_main[sample(NN_main2main[i_sample,], size = 1),,drop = FALSE]
+      r <- runif(1)
 
-  n_syn <- (n_neg - n_pos)
-  C <- rep(ceiling(imb_ratio) - 1, n_pos)
-
-  n_diff <- (n_syn - sum(C))
-
-  ii <- sample(1:n_pos, size = abs(n_diff))
-  C[ii] <- C[ii] + n_diff/abs(n_diff)
-
-  x_syn <- matrix(nrow = 0, ncol = p)
-  for (i in 1:n_pos) {
-    if (C[i] == 0) {
-      next
+      x_syn_list[[i]] <- rbind(x_syn_list[[i]], x_main_selected + r*(x_target - x_main_selected))
     }
-    NN_i <- NN[i,]
-    i_k <- sample(1:k, C[i], replace = TRUE)
-    lambda <- runif(C[i])
-    kk <- x_pos[NN_i,,drop = FALSE]
-    kk <- kk[i_k,]
-    x_pos_i_temp <- x_pos[rep(i, C[i]),,drop = FALSE]
-    x_syn_step <- x_pos_i_temp + (kk - x_pos_i_temp)*lambda
-    x_syn <- rbind(x_syn, x_syn_step)
   }
 
-  x_new <- rbind(
-    x_syn,
-    x_pos,
-    x_neg
-  )
-  y_new <- c(
-    rep(class_pos, n_syn + n_pos),
-    rep(class_neg, n_neg)
-  )
-  y_new <- factor(y_new, levels = levels(y), labels = levels(y))
-  colnames(x_new) <- var_names
+  x_syn <- do.call(rbind, x_syn_list)
+  y_syn <- factor(unlist(sapply(1:k_class, function(m) rep(class_names[m], n_needed[m]))), levels = class_names, labels = class_names)
 
+  x_new <- rbind(x, x_syn)
+  y_new <- c(y, y_syn)
+
+  colnames(x_new) <- var_names
   return(list(
     x_new = x_new,
     y_new = y_new,
-    x_syn = x_new[1:n_syn,, drop = FALSE],
-    C = C
+    x_syn = x_syn,
+    y_syn = y_syn
   ))
-
 }

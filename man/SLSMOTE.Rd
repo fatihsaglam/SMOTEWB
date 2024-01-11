@@ -9,7 +9,7 @@ SLSMOTE(x, y, k1 = 5, k2 = 5)
 \arguments{
 \item{x}{feature matrix or data.frame.}
 
-\item{y}{a factor class variable.}
+\item{y}{a factor class variable with two classes.}
 
 \item{k1}{number of neighbors to link. Default is 5.}
 

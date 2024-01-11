@@ -17,8 +17,8 @@ SMOTE(x, y, k = 5)
 a list with resampled dataset.
  \item{x_new}{Resampled feature matrix.}
  \item{y_new}{Resampled target variable.}
- \item{x_syn}{Generated synthetic data.}
- \item{C}{Number of synthetic samples for each positive class samples.}
+ \item{x_syn}{Generated synthetic feature data.}
+ \item{y_syn}{Generated synthetic label data.}
 }
 \description{
 Resampling with SMOTE.
@@ -30,6 +30,8 @@ samples along that link.
 
 It is well known that SMOTE is sensitive to noisy data. It may create more
 noise.
+
+Can work with classes more than 2.
 
 Note: Much faster than \code{smotefamily::SMOTE()}.
 }

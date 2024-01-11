@@ -9,7 +9,7 @@ ADASYN(x, y, k = 5)
 \arguments{
 \item{x}{feature matrix or data.frame.}
 
-\item{y}{a factor class variable. Can be multiclass.}
+\item{y}{a factor class variable with two classes.}
 
 \item{k}{number of neighbors. Default is 5.}
 }
