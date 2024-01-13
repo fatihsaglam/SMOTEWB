@@ -5,15 +5,21 @@
 #' @param x feature matrix.
 #' @param y a factor class variable with two classes.
 #' @param n_weak_classifier number of weak classifiers for boosting.
-#' @param class_weights numeric vector of length two. First number is for positive class, and second is for negative. Higher the relative weight, lesser noises for that class. By default,  \eqn{2\times n_{neg}/n} for positive and
-#' \eqn{2\times n_{pos}/n} for negative class.
+#' @param class_weights numeric vector of length two. First number is for
+#' positive class, and second is for negative. Higher the relative weight,
+#' lesser noises for that class. By default,  \eqn{2\times n_{neg}/n} for
+#' positive and \eqn{2\times n_{pos}/n} for negative class.
 #' @param k_max to increase maximum number of neighbors. Default is
 #' \code{ceiling(n_neg/n_pos)}.
 #' @param ... additional inputs for ada::ada().
 #'
 #' @details
-#' SMOTEWB (Saglam & Cengiz, 2022) is a SMOTE-based oversampling method which can handle noisy data and adaptively decides the appropriate number of neighbors
+#' SMOTEWB (Saglam & Cengiz, 2022) is a SMOTE-based oversampling method which
+#' can handle noisy data and adaptively decides the appropriate number of neighbors
 #' to link during resampling with SMOTE.
+#'
+#' Trained model based on this method gives significantly better Matthew
+#' Correlation Coefficient scores compared to others.
 #'
 #' @return a list with resampled dataset.
 #'  \item{x_new}{Resampled feature matrix.}
