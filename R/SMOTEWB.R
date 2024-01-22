@@ -40,6 +40,7 @@
 #' trough noise detection and the boosting procedure. Expert Systems with
 #' Applications, 200, 117023.
 #'
+#' Can work with 2 classes only yet.
 #' @examples
 #'
 #' set.seed(1)
@@ -77,6 +78,75 @@ SMOTEWB <- function(
   if (!is.factor(y)) {
     stop("y must be a factor")
   }
+
+  # var_names <- colnames(x)
+  # x <- as.matrix(x)
+  # p <- ncol(x)
+  # n <- nrow(x)
+  #
+  # class_names <- levels(y)
+  # n_classes <- sapply(class_names, function(m) sum(y == m))
+  # k_class <- length(class_names)
+  # n_classes_max <- max(n_classes)
+  # n_needed <- n_classes_max - n_classes
+  # x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
+  #
+  # w <- boosted_weights(x = x, y = y, n_iter = n_weak_classifier)
+  # w_classes <- lapply(class_names, function(m) w[y == class_names])
+  #
+  # if (is.null(class_weights)) {
+  #   wclass <- n/n_classes
+  # } else {
+  #   wclass <- class_weights
+  # }
+  #
+  # treshs <- (1/n)*w_class
+  # scl <- sum(treshs*n_classes)
+  # treshs <- treshs(scl)
+  #
+  # nl <- sapply(1:k_class, function(m) {
+  #   ifelse(w_classes[[m]] > treshs[m], "noise", "notnoise")
+  # })
+  #
+  # nl_classes <- lapply(class_names, function(m) nl[y == class_names])
+  #
+  # n_noise_classes <- lapply(nl_classes, function(m) sum(m == "noise"))
+  # n_notnoise_classes <- lapply(nl_classes, function(m) sum(m == "notnoise"))
+  #
+  # x_classes_noise <- lapply(1:k_class, function(m) {
+  #   x_classes[[m]][nl_classes[[m]] == "noise",,drop = FALSE]
+  # })
+  # x_classes_notnoise <- lapply(1:k_class, function(m) {
+  #   x_classes[[m]][nl_classes[[m]] == "notnoise",,drop = FALSE]
+  # })
+  #
+  #
+  # x_syn_list <- list()
+  #
+  # for (i in 1:k_class) {
+  #   counter <- 0
+  #   x_main <- x_classes[[i]]
+  #
+  #   NN_main2main <- FNN::get.knnx(data = x_classes[[i]], query = x_classes[[i]], k = k + 1)$nn.index[,-1]
+  #
+  #   x_syn_list[[i]] <- matrix(data = NA, nrow = 0, ncol = p)
+  #
+  #   while (TRUE) {
+  #     if (counter == n_needed[i]) {
+  #       break
+  #     }
+  #     counter <- counter + 1
+  #
+  #     i_sample <- sample(1:n_classes[i], size = 1)
+  #     x_main_selected <- x_main[i_sample,,drop = FALSE]
+  #     x_target <- x_main[sample(NN_main2main[i_sample,], size = 1),,drop = FALSE]
+  #     r <- runif(1)
+  #
+  #     x_syn_list[[i]] <- rbind(x_syn_list[[i]], x_main_selected + r*(x_target - x_main_selected))
+  #   }
+  # }
+  #
+
 
   var_names <- colnames(x)
   x <- as.matrix(x)
