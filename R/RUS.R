@@ -69,8 +69,8 @@ RUS <- function(x, y) {
     }
     i_sample <- sample(1:n_classes[i], size = n_neededToRemove[i])
 
-    x_classes[[i]] <- x_classes[i_sample][-i_sample,, drop = FALSE]
-    y_classes[[i]] <- xy_classes[i_sample][-i_sample]
+    x_classes[[i]] <- x_classes[[i]][-i_sample,, drop = FALSE]
+    y_classes[[i]] <- y_classes[[i]][-i_sample]
   }
 
   x_new <- do.call(rbind, x_classes)
