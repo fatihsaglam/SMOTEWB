@@ -9,6 +9,8 @@
 #' Random Oversampling (ROS) is a method of copying and pasting of positive
 #' samples until balance is achieved.
 #'
+#' Can work with classes more than 2.
+#'
 #' @return a list with resampled dataset.
 #'  \item{x_new}{Resampled feature matrix.}
 #'  \item{y_new}{Resampled target variable.}
@@ -46,44 +48,50 @@ ROS <- function(x, y) {
   if (!is.factor(y)) {
     stop("y must be a factor")
   }
+
+  var_names <- colnames(x)
   x <- as.matrix(x)
+  p <- ncol(x)
+  n <- nrow(x)
 
-  class_names <- as.character(unique(y))
-  class_pos <- names(which.min(table(y)))
-  class_neg <- class_names[class_names != class_pos]
+  class_names <- levels(y)
+  n_classes <- sapply(class_names, function(m) sum(y == m))
+  k_class <- length(class_names)
+  n_classes_max <- max(n_classes)
+  n_needed <- n_classes_max - n_classes
+  x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
+  x_syn_list <- list()
 
-  x_pos <- x[y == class_pos,,drop = FALSE]
-  x_neg <- x[y == class_neg,,drop = FALSE]
+  for (i in 1:k_class) {
+    counter <- 0
+    x_main <- x_classes[[i]]
 
-  n_pos <- nrow(x_pos)
-  n_neg <- nrow(x_neg)
+    x_syn_list[[i]] <- matrix(data = NA, nrow = 0, ncol = p)
+    while (TRUE) {
+      if (counter == n_needed[i]) {
+        break
+      }
+      counter <- counter + 1
 
-  imb_ratio <- n_neg/n_pos
-  n_new <- (n_neg - n_pos)
+      i_sample <- sample(1:n_classes[i], size = 1)
+      x_main_selected <- x_main[i_sample,,drop = FALSE]
 
-  C <- rep(floor(imb_ratio - 1), n_pos)
+      x_syn_list[[i]] <- rbind(x_syn_list[[i]], x_main_selected)
+    }
+  }
 
-  n_diff <- (n_new - sum(C))
-  i_diff <- sample(1:n_pos, n_diff)
-  C[i_diff] <- C[i_diff] + 1
-  i_new <- rep(1:n_pos, C)
+  x_syn <- do.call(rbind, x_syn_list)
+  y_syn <- factor(unlist(sapply(1:k_class, function(m) rep(class_names[m], n_needed[m]))), levels = class_names, labels = class_names)
 
-  x_ROS <- x_pos[i_new,]
+  x_new <- rbind(x, x_syn)
+  y_new <- c(y, y_syn)
 
-  x_new <- rbind(
-    x_ROS,
-    x_pos,
-    x_neg
-  )
-  y_new <- c(
-    rep(class_pos, length(i_new) + n_pos),
-    rep(class_neg, n_neg)
-  )
-  y_new <- factor(y_new, levels = levels(y), labels = levels(y))
-
+  colnames(x_new) <- var_names
   return(list(
     x_new = x_new,
-    y_new = y_new
+    y_new = y_new,
+    x_syn = x_syn,
+    y_syn = y_syn
   ))
 }
 

@@ -13,8 +13,10 @@ SMOTEWB(x, y, n_weak_classifier = 100, class_weights = NULL, k_max = NULL, ...)
 
 \item{n_weak_classifier}{number of weak classifiers for boosting.}
 
-\item{class_weights}{numeric vector of length two. First number is for positive class, and second is for negative. Higher the relative weight, lesser noises for that class. By default,  \eqn{2\times n_{neg}/n} for positive and
-\eqn{2\times n_{pos}/n} for negative class.}
+\item{class_weights}{numeric vector of length two. First number is for
+positive class, and second is for negative. Higher the relative weight,
+lesser noises for that class. By default,  \eqn{2\times n_{neg}/n} for
+positive and \eqn{2\times n_{pos}/n} for negative class.}
 
 \item{k_max}{to increase maximum number of neighbors. Default is
 \code{ceiling(n_neg/n_pos)}.}
@@ -34,8 +36,12 @@ a list with resampled dataset.
 Resampling with SMOTE with boosting.
 }
 \details{
-SMOTEWB (Saglam & Cengiz, 2022) is a SMOTE-based oversampling method which can handle noisy data and adaptively decides the appropriate number of neighbors
+SMOTEWB (Saglam & Cengiz, 2022) is a SMOTE-based oversampling method which
+can handle noisy data and adaptively decides the appropriate number of neighbors
 to link during resampling with SMOTE.
+
+Trained model based on this method gives significantly better Matthew
+Correlation Coefficient scores compared to others.
 }
 \examples{
 
