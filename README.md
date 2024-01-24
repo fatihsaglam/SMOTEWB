@@ -10,7 +10,10 @@ The package also includes faster versions of popular resampling methods, ADASYN,
       SMOTE (RSLSMOTE), and Random Over-Sampling Examples (ROSE).
 
 # R installation
-devtools::install_github("https://github.com/fatihsaglam/SMOTEWB")
+
+```r
+devtools::install_github("fatihsaglam/SMOTEWB")
+```
 
 ## References
 
