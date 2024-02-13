@@ -63,6 +63,8 @@ plot(m$x_new, col = m$y_new)
 Sağlam, F., & Cengiz, M. A. (2022). A novel SMOTE-based resampling technique
 trough noise detection and the boosting procedure. Expert Systems with
 Applications, 200, 117023.
+
+Can work with 2 classes only yet.
 }
 \author{
 Fatih Saglam, saglamf89@gmail.com
