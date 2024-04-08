@@ -2,6 +2,7 @@
 
 export(ADASYN)
 export(BLSMOTE)
+export(GSMOTE)
 export(ROS)
 export(ROSE)
 export(RSLSMOTE)
