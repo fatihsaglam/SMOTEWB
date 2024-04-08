@@ -11,7 +11,7 @@ Description: Provides the SMOTE with Boosting (SMOTEWB) algorithm. See
       SMOTE-based resampling technique which creates synthetic data on the links 
       between nearest neighbors. SMOTEWB uses boosting weights to determine where
       to generate new samples and automatically decides the number of neighbors 
-      for eacg sample. It is robust to noise and outperforms most of the 
+      for each sample. It is robust to noise and outperforms most of the 
       alternatives according to Matthew Correlation Coefficient metric.
       Alternative resampling methods are also available in the package.
 Depends: R (>= 4.2)

@@ -5,9 +5,12 @@
 #' @param x feature matrix.
 #' @param y a factor class variable with two classes.
 #' @param k number of neighbors. Default is 5.
-#' @param alpha_sel selection method. Can be "minority", "majority" or "combined". Default is "combined".
-#' @param alpha_trunc truncation factor. A numeric value in \eqn{[-1,1]}. Default is 0.5.
-#' @param alpha_def deformation factor. A numeric value in \eqn{[0,1]}. Default is 0.5
+#' @param alpha_sel selection method. Can be "minority", "majority" or "combined".
+#' Default is "combined".
+#' @param alpha_trunc truncation factor. A numeric value in \eqn{[-1,1]}.
+#' Default is 0.5.
+#' @param alpha_def deformation factor. A numeric value in \eqn{[0,1]}.
+#' Default is 0.5
 #'
 #' @details
 #' GSMOTE (Douzas & Bacao, 2019) is an oversampling method which creates synthetic
@@ -62,6 +65,12 @@ GSMOTE <-
 
     match.arg(alpha_sel, c("minority", "majority", "combined"))
 
+    if (alpha_trunc < -1 | alpha_trunc > 1) {
+      stop("alpha_trunc must be between [-1,1]")
+    }
+    if (alpha_def < 0 | alpha_def > 1) {
+      stop("alpha_def must be between [0,1]")
+    }
     if (!is.data.frame(x) & !is.matrix(x)) {
       stop("x must be a matrix or dataframe")
     }
@@ -73,11 +82,9 @@ GSMOTE <-
     if (!is.factor(y)) {
       stop("y must be a factor")
     }
-
     if (!is.numeric(k)) {
       stop("k must be numeric")
     }
-
     if (k < 1) {
       stop("k must be positive")
     }
@@ -104,7 +111,7 @@ GSMOTE <-
     n_diff <- (n_syn - sum(C))
 
     ii <- sample(1:n_pos, size = abs(n_diff))
-    C[ii] <- C[ii]  + n_diff / abs(n_diff)
+    C[ii] <- C[ii] + n_diff / abs(n_diff)
 
     m_pos2neg <- FNN::get.knnx(data = x_neg,
                                query = x_pos,

@@ -13,11 +13,14 @@ GSMOTE(x, y, k = 5, alpha_sel = "combined", alpha_trunc = 0.5, alpha_def = 0.5)
 
 \item{k}{number of neighbors. Default is 5.}
 
-\item{alpha_sel}{selection method. Can be "minority", "majority" or "combined". Default is "combined".}
+\item{alpha_sel}{selection method. Can be "minority", "majority" or "combined".
+Default is "combined".}
 
-\item{alpha_trunc}{truncation factor. A numeric value in \eqn{[-1,1]}. Default is 0.5.}
+\item{alpha_trunc}{truncation factor. A numeric value in \eqn{[-1,1]}.
+Default is 0.5.}
 
-\item{alpha_def}{deformation factor. A numeric value in \eqn{[0,1]}. Default is 0.5}
+\item{alpha_def}{deformation factor. A numeric value in \eqn{[0,1]}.
+Default is 0.5}
 }
 \value{
 a list with resampled dataset.

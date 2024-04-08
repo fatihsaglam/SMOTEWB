@@ -1,0 +1,53 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+bibliography: bibliography.bib
+---
+
+---
+bibliography: references.bib
+---
+
+[![](https://cranlogs.r-pkg.org/badges/SMOTEWB)](https://cran.r-project.org/package=SMOTEWB)
+
+# SMOTEWB
+
+Sağlam and Mehmet's SMOTE with Boosting (SMOTEWB) [@SAGLAM2022117023] oversampling algorithm for imbalanced data sets. SMOTEWB is noise resistant and more successful according to Matthew's
+Correlation Coefficient in various data sets. It is a
+SMOTE-based resampling technique which creates synthetic data on the links 
+between nearest neighbors. SMOTEWB uses boosting weights to determine where
+to generate new samples and automatically decides the number of neighbors 
+for each sample. It is robust to noise and outperforms most of the 
+alternatives according to Matthew Correlation Coefficient metric. Package includes
+various resampling methods to be used in imbalanced classification. Available resampling
+methods are: 
+
+1- ADASYN (Adaptive Synthetic Sampling)
+
+2- BLSMOTE (Borderline SMOTE)
+
+3- GSMOTE (Geometric SMOTE)
+
+4- ROS (Random oversampling)
+
+5- ROSE (Randomly Over Sampling Examples)
+
+6- RSLSMOTE (Relocating safe-level SMOTE with minority outcast handling)
+
+7- RUS (Random undersampling)
+
+8- SLSMOTE (Safe-level Synthetic Minority Oversampling Technique)
+
+9- SMOTE (Synthetic minority oversampling technique)
+
+10- SMOTEWB (SMOTE with boosting) [@SAGLAM2022117023]
+
+More methods will be implemented.
+
+# R installation
+devtools::install_github("https://github.com/fatihsaglam/SMOTEWB")
+
+## References
+
+
