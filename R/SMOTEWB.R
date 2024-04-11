@@ -206,7 +206,7 @@ SMOTEWB <- function(
   y_notnoise <- c(rep(class_pos, n_pos_notnoise),
                   rep(class_neg, n_neg_notnoise))
 
-  k_max <- min(k_max, n_pos - 2)
+  k_max <- min(k_max, nrow(x_notnoise) - 1)
   NN <- FNN::knnx.index(data = x_notnoise, query = x_pos, k = k_max + 1)
   NN_temp <- matrix(data = NA, nrow = n_pos, ncol = k_max)
   NN_temp[nl_pos == "noise", ] <- NN[nl_pos == "noise", -(k_max + 1)]
