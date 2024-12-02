@@ -22,6 +22,8 @@ Resampling with ROS.
 \details{
 Random Oversampling (ROS) is a method of copying and pasting of positive
 samples until balance is achieved.
+
+Can work with classes more than 2.
 }
 \examples{
 

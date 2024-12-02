@@ -13,6 +13,7 @@ RUS(x, y)
 }
 \value{
 a list with resampled dataset.
+
  \item{x_new}{Resampled feature matrix.}
  \item{y_new}{Resampled target variable.}
 }
@@ -22,6 +23,8 @@ Resampling with RUS.
 \details{
 Random Undersampling (RUS) is a method of removing negative
 samples until balance is achieved.
+
+Can work with classes more than 2.
 }
 \examples{
 

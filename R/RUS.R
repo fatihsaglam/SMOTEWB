@@ -9,7 +9,10 @@
 #' Random Undersampling (RUS) is a method of removing negative
 #' samples until balance is achieved.
 #'
+#' Can work with classes more than 2.
+#'
 #' @return a list with resampled dataset.
+#'
 #'  \item{x_new}{Resampled feature matrix.}
 #'  \item{y_new}{Resampled target variable.}
 #'
@@ -47,31 +50,32 @@ RUS <- function(x, y) {
     stop("y must be a factor")
   }
 
-  class_names <- as.character(unique(y))
-  class_pos <- names(which.min(table(y)))
-  class_neg <- class_names[class_names != class_pos]
+  var_names <- colnames(x)
+  x <- as.matrix(x)
+  p <- ncol(x)
+  n <- nrow(x)
 
-  x_pos <- x[y == class_pos,,drop = FALSE]
-  x_neg <- x[y == class_neg,,drop = FALSE]
+  class_names <- levels(y)
+  n_classes <- sapply(class_names, function(m) sum(y == m))
+  k_class <- length(class_names)
+  n_classes_min <- min(n_classes)
+  n_neededToRemove <- n_classes - n_classes_min
+  x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
+  y_classes <- lapply(class_names, function(m) y[y == m])
 
-  n_pos <- nrow(x_pos)
-  n_neg <- nrow(x_neg)
+  for (i in 1:k_class) {
+    if (n_neededToRemove[i] == 0) {
+      next
+    }
+    i_sample <- sample(1:n_classes[i], size = n_neededToRemove[i])
 
-  n_remove <- (n_neg - n_pos)
+    x_classes[[i]] <- x_classes[[i]][-i_sample,, drop = FALSE]
+    y_classes[[i]] <- y_classes[[i]][-i_sample]
+  }
 
-  i_remove <- sample(1:n_neg, n_remove)
-
-  x_neg_new <- x_neg[-i_remove,,drop = FALSE]
-
-  x_new <- rbind(
-    x_pos,
-    x_neg_new
-  )
-  y_new <- c(
-    rep(class_pos, n_pos),
-    rep(class_neg, n_pos)
-  )
-  y_new <- factor(y_new, levels = levels(y), labels = levels(y))
+  x_new <- do.call(rbind, x_classes)
+  y_new <- unlist(y_classes)
+  colnames(x_new) <- var_names
 
   return(list(
     x_new = x_new,
