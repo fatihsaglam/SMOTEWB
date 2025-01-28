@@ -131,6 +131,7 @@ GSMOTE <-
       x_center <- x_pos[i, , drop = FALSE]
 
       for (j in 1:C[i]) {
+
         ### Surface ###
         if (alpha_sel == "minority") {
           i_selected_neighbor_pos <- sample(1:k, 1)
