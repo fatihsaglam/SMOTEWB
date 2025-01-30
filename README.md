@@ -38,7 +38,9 @@ More methods will be implemented.
 
 # R installation
 
-devtools::install_github(“<https://github.com/fatihsaglam/SMOTEWB>”)
+```r
+devtools::install_github("fatihsaglam/SMOTEWB")
+```
 
 ## References
 
