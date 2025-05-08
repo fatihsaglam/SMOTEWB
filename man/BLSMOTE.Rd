@@ -22,7 +22,6 @@ a list with resampled dataset.
  \item{x_new}{Resampled feature matrix.}
  \item{y_new}{Resampled target variable.}
  \item{x_syn}{Generated synthetic data.}
- \item{C}{Number of synthetic samples for each positive class samples.}
 }
 \description{
 \code{BLSMOTE()} applies BLSMOTE (Borderline-SMOTE) which is a
@@ -37,6 +36,8 @@ challenging for classification, and thus generating synthetic samples in
 their vicinity can be more effective than generating them randomly.
 
 Note: Much faster than \code{smotefamily::BLSMOTE()}.
+
+Can work with classes more than 2.
 }
 \examples{
 

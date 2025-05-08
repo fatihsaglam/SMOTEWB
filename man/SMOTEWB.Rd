@@ -4,7 +4,15 @@
 \alias{SMOTEWB}
 \title{SMOTE with boosting (SMOTEWB)}
 \usage{
-SMOTEWB(x, y, n_weak_classifier = 100, class_weights = NULL, k_max = NULL, ...)
+SMOTEWB(
+  x,
+  y,
+  n_weak_classifier = 100,
+  class_weights = NULL,
+  k_max = NULL,
+  n_needed = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{feature matrix.}
@@ -21,6 +29,9 @@ positive and \eqn{2\times n_{pos}/n} for negative class.}
 \item{k_max}{to increase maximum number of neighbors. Default is
 \code{ceiling(n_neg/n_pos)}.}
 
+\item{n_needed}{vector of desired number of synthetic samples for each class.
+A vector of integers for each class. Default is NULL meaning full balance.}
+
 \item{...}{additional inputs for ada::ada().}
 }
 \value{
@@ -28,9 +39,11 @@ a list with resampled dataset.
  \item{x_new}{Resampled feature matrix.}
  \item{y_new}{Resampled target variable.}
  \item{x_syn}{Generated synthetic data.}
+ \item{y_syn}{Generated synthetic data labels.}
  \item{w}{Boosting weights for original dataset.}
  \item{k}{Number of nearest neighbors for positive class samples.}
  \item{C}{Number of synthetic samples for each positive class samples.}
+ \item{fl}{"good", "bad" and "lonely" sample labels}
 }
 \description{
 Resampling with SMOTE with boosting.
@@ -42,6 +55,8 @@ to link during resampling with SMOTE.
 
 Trained model based on this method gives significantly better Matthew
 Correlation Coefficient scores compared to others.
+
+Can work with classes more than 2.
 }
 \examples{
 

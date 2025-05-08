@@ -19,11 +19,12 @@
 #'
 #' Note: Much faster than \code{smotefamily::BLSMOTE()}.
 #'
+#' Can work with classes more than 2.
+#'
 #' @return a list with resampled dataset.
 #'  \item{x_new}{Resampled feature matrix.}
 #'  \item{y_new}{Resampled target variable.}
 #'  \item{x_syn}{Generated synthetic data.}
-#'  \item{C}{Number of synthetic samples for each positive class samples.}
 #'
 #' @author Fatih Saglam, saglamf89@gmail.com
 #'
@@ -85,112 +86,104 @@ BLSMOTE <- function(x, y, k1 = 5, k2 = 5, type = "type1") {
     stop("k2 must be positive")
   }
 
+
   var_names <- colnames(x)
   x <- as.matrix(x)
-  n <- length(y)
   p <- ncol(x)
 
   class_names <- as.character(unique(y))
-  class_pos <- names(which.min(table(y)))
-  class_neg <- class_names[class_names != class_pos]
+  n_classes <- sapply(class_names, function(m) sum(y == m))
+  k_class <- length(class_names)
+  x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
 
-  x_pos <- x[y == class_pos,,drop = FALSE]
-  x_neg <- x[y == class_neg,,drop = FALSE]
+  n_needed <- max(n_classes) - n_classes
+  x_syn_list <- list()
 
-  n_pos <- nrow(x_pos)
-  n_neg <- nrow(x_neg)
 
-  x <- rbind(x_pos, x_neg)
-
-  i_danger <- c()
-
-  while (length(i_danger) < 2) {
-    nn_pos2all <- FNN::knnx.index(data = x, query = x_pos, k = k2 + 1)[,-1]
-
-    nn_pos2all_classcounts <- cbind(
-      rowSums(nn_pos2all <= n_pos),
-      rowSums(nn_pos2all > n_pos)
-    )
-    safe_levels <- nn_pos2all_classcounts[,1]/k2
-
-    i_danger <- which(safe_levels <= 0.5 & safe_levels > 0)
-    i_safe <- which(safe_levels > 0.5)
-    i_outcast <- which(safe_levels == 0)
-
-    if (length(i_danger) < 2) {
-      k2 <- k2 + 1
+  for (j in 1:k_class) {
+    x_syn_list[[j]] <- matrix(nrow = 0, ncol = p)
+    if (n_needed[j] == 0) {
+      next
     }
-  }
-  x_pos_danger <- x_pos[i_danger,,drop = FALSE]
-  # x_pos_safe <- x_pos[i_safe,,drop = FALSE]
-  # x_pos_outcast <- x_pos[i_outcast,,drop = FALSE]
 
-  n_danger <- nrow(x_pos_danger)
+    n_main <- n_classes[j]
+    n_other <- sum(n_classes[-j])
+    x_main <- x_classes[[j]]
 
-  k1 <- pmin(k1, n_danger - 1)
+    i_danger <- c()
 
-  nn_danger2danger <- FNN::knnx.index(data = x_pos_danger, query = x_pos_danger, k = k1 + 1)[,-1,drop = FALSE]
+    while(length(i_danger) < 2) {
+      nn_main2all <- RANN::nn2(data = x, query = x_main, k = k2 + 1)$nn.idx[,-1]
 
-  n_syn <- (n_neg - n_pos)
-  C <- rep(ceiling(n_syn/n_danger) - 1, n_danger)
+      count_main <- rowSums(matrix(y[nn_main2all] == class_names[j], nrow = nrow(nn_main2all), ncol = ncol(nn_main2all)))
+      count_other <- k2 - count_main
+      nn_main2all_classcounts <- cbind(
+        count_main,
+        count_other
+      )
+      safe_levels <- nn_main2all_classcounts[,1]/k2
 
-  n_diff <- (n_syn - sum(C))
-  ii <- sample(1:n_danger, size = abs(n_diff))
-  C[ii] <- C[ii] + n_diff/abs(n_diff)
+      i_danger <- which(safe_levels <= 0.5 & safe_levels > 0)
+      i_safe <- which(safe_levels > 0.5)
+      i_outcast <- which(safe_levels == 0)
+      n_danger <- length(i_danger)
 
-  x_syn <- matrix(nrow = 0, ncol = p)
-
-  if (type == "type1") {
-    if (k1 >= n_danger) {
-      stop("k1 exceeded the number of dangerous samples.")
-    }
-    for (i in 1:n_danger) {
-      i_k <- sample(1:k1, C[i], replace = TRUE)
-      r <- runif(C[i])
-      x_pos_danger_i <- x_pos_danger[rep(i, C[i]),]
-      x_pos_danger_neighbour <- x_pos_danger[nn_danger2danger[i, i_k],, drop = FALSE]
-      x_syn_step <- x_pos_danger_i + (x_pos_danger_neighbour - x_pos_danger_i)*r
-      x_syn <- rbind(x_syn, x_syn_step)
-    }
-  }
-
-  if (type == "type2") {
-    for (i in 1:n_danger) {
-      CC <- C[i]
-      i <- i_danger[i]
-      i_k <- sample(1:k2, CC, replace = TRUE)
-      i_nn_pos2all_i <- nn_pos2all[i, i_k]
-      r <- rep(0, CC)
-      if (sum(i_nn_pos2all_i <= n_pos) > 0) {
-        r[i_nn_pos2all_i < n_pos] <- runif(sum(i_nn_pos2all_i <= n_pos))
+      if (n_danger < 2) {
+        k2 <- k2 + 1
       }
-      if (sum(i_nn_pos2all_i > n_pos) > 0) {
-        r[i_nn_pos2all_i >= n_pos] <- runif(sum(i_nn_pos2all_i > n_pos), 0, 0.5)
-      }
-      x_pos_i <- x_pos[rep(i, CC),]
-      x_pos_neighbour <- x[i_nn_pos2all_i,, drop = FALSE]
+    }
 
-      x_syn_step <- x_pos_i + (x_pos_neighbour - x_pos_i)*r
-      x_syn <- rbind(x_syn, x_syn_step)
+    x_main_danger <- x_main[i_danger,,drop = FALSE]
+    k1 <- pmin(k1, n_danger - 1)
+
+    if (type == "type1") {
+      if (k1 >= n_danger) {
+        stop("k1 exceeded the number of dangerous samples.")
+      }
+      nn_danger2danger <- FNN::knnx.index(data = x_main_danger, query = x_main_danger, k = k1 + 1)[,-1,drop = FALSE]
+
+      while (nrow(x_syn_list[[j]]) < n_needed[j]) {
+        i_main <- sample(1:nrow(x_main_danger), 1)
+        i_k <- sample(1:k1, 1, replace = TRUE)
+        r <- runif(1)
+        x_main_danger_i <- x_main_danger[i_main,]
+        x_main_danger_neighbour <- x_main_danger[nn_danger2danger[i_main, i_k],, drop = FALSE]
+        x_syn_step <- x_main_danger_i + (x_main_danger_neighbour - x_main_danger_i)*r
+        x_syn_list[[j]] <- rbind(x_syn_list[[j]], x_syn_step)
+      }
+    }
+
+    if (type == "type2") {
+      nn_danger2all <- RANN::nn2(data = x, query = x_main_danger, k = k1 + 1)$nn.idx[,-1,drop = FALSE]
+      while (nrow(x_syn_list[[j]]) < n_needed[j]) {
+        i_main <- sample(1:nrow(x_main_danger), 1)
+        i_k <- sample(1:k1, 1, replace = TRUE)
+        x_main_danger_i <- x_main_danger[i_main,]
+
+        i_nn_danger2all_i <- nn_danger2all[i_main, i_k]
+        r <- ifelse(y[i_nn_danger2all_i] == class_names[j], runif(1), runif(1, 0, 0.5))
+        x_main_danger_neighbour <- x[i_nn_danger2all_i, , drop = FALSE]
+        x_syn_step <- x_main_danger_i + (x_main_danger_neighbour - x_main_danger_i)*r
+        x_syn_list[[j]] <- rbind(x_syn_list[[j]], x_syn_step)
+      }
     }
   }
 
-  x_new <- rbind(
-    x_syn,
-    x_pos,
-    x_neg
-  )
-  y_new <- c(
-    rep(class_pos, n_syn + n_pos),
-    rep(class_neg, n_neg)
-  )
-  y_new <- factor(y_new, levels = levels(y), labels = levels(y))
+  x_syn <- do.call(rbind, x_syn_list)
+  y_syn <- factor(unlist(sapply(1:k_class, function(m) rep(class_names[m], n_needed[m]))), levels = class_names, labels = class_names)
+
+  x_new <- rbind(x, x_syn)
+  y_new <- c(y, y_syn)
   colnames(x_new) <- var_names
 
   return(list(
     x_new = x_new,
     y_new = y_new,
-    x_syn = x_new[1:n_syn,,drop = FALSE],
-    C = C
+    x_syn = x_syn,
+    y_syn = y_syn
   ))
 }
+
+
+
+

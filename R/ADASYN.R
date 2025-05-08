@@ -16,6 +16,8 @@
 #'
 #' Note: Much faster than \code{smotefamily::ADAS()}.
 #'
+#' Can work with classes more than 2.
+#'
 #' @return a list with resampled dataset.
 #'  \item{x_new}{Resampled feature matrix.}
 #'  \item{y_new}{Resampled target variable.}
@@ -78,64 +80,66 @@ ADASYN <- function(x, y, k = 5) {
   p <- ncol(x)
 
   class_names <- as.character(unique(y))
-  class_pos <- names(which.min(table(y)))
-  class_neg <- class_names[class_names != class_pos]
+  n_classes <- sapply(class_names, function(m) sum(y == m))
+  k_class <- length(class_names)
+  x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
 
-  x_pos <- x[y == class_pos,,drop = FALSE]
-  x_neg <- x[y == class_neg,,drop = FALSE]
+  n_needed <- max(n_classes) - n_classes
+  x_syn_list <- list()
 
-  n_pos <- nrow(x_pos)
-  n_neg <- nrow(x_neg)
-
-  x <- rbind(x_pos, x_neg)
-
-  k <- min(k, n_pos - 1)
-  nn_pos2all <- RANN::nn2(data = x, query = x_pos, k = k + 1)$nn.idx[,-1]
-  nn_pos2all_classcounts <- cbind(
-    rowSums(nn_pos2all <= n_pos),
-    rowSums(nn_pos2all > n_pos)
-  )
-  nn_pos2pos <- RANN::nn2(data = x_pos, query = x_pos, k = k + 1)$nn.idx[,-1]
-
-  n_syn <- (n_neg - n_pos)
-  if (sum(nn_pos2all_classcounts[,2]) == 0) {
-    w <- rep(1/n_syn, n_syn)
-  } else {
-    w <- nn_pos2all_classcounts[,2]/sum(nn_pos2all_classcounts[,2])
-  }
-  C <- round(n_syn*w)
-
-  x_syn <- matrix(nrow = 0, ncol = p)
-  for (i in 1:n_pos) {
-    if (C[i] == 0) {
+  for (j in 1:k_class) {
+    x_syn_list[[j]] <- matrix(nrow = 0, ncol = p)
+    if (n_needed[j] == 0) {
       next
     }
-    NN_i <- nn_pos2pos[i,]
-    i_k <- sample(1:k, C[i], replace = TRUE)
-    lambda <- runif(C[i])
-    kk <- x_pos[NN_i,,drop = FALSE]
-    kk <- kk[i_k,]
-    x_pos_i_temp <- x_pos[rep(i, C[i]),,drop = FALSE]
-    x_syn_step <- x_pos_i_temp + (kk - x_pos_i_temp)*lambda
-    x_syn <- rbind(x_syn, x_syn_step)
+
+    n_main <- n_classes[j]
+    n_other <- sum(n_classes[-j])
+
+    nn_main2all <- RANN::nn2(data = x, query = x_classes[[j]], k = k + 1)$nn.idx[,-1]
+
+    count_main <- rowSums(matrix(y[nn_main2all] == class_names[j], nrow = nrow(nn_main2all), ncol = ncol(nn_main2all)))
+    count_other <- k - count_main
+    nn_main2all_classcounts <- cbind(
+      count_main,
+      count_other
+    )
+    nn_main2main <- RANN::nn2(data = x_classes[[j]], query = x_classes[[j]], k = k + 1)$nn.idx[,-1]
+
+    if (sum(nn_main2all_classcounts[,2]) == 0) {
+      w <- rep(1/n_needed[j], n_main)
+    } else {
+      w <- nn_main2all_classcounts[,2]/sum(nn_main2all_classcounts[,2])
+    }
+    C <- round(n_needed[j]*w)
+
+    for (i in 1:n_main) {
+      if (C[i] == 0) {
+        next
+      }
+      NN_i <- nn_main2main[i,]
+      i_k <- sample(1:k, C[i], replace = TRUE)
+      lambda <- runif(C[i])
+      kk <- x_classes[[j]][NN_i,,drop = FALSE]
+      kk <- kk[i_k,]
+      x_main_i_temp <- x_classes[[j]][rep(i, C[i]),,drop = FALSE]
+      x_syn_step <- x_main_i_temp + (kk - x_main_i_temp)*lambda
+      x_syn_list[[j]] <- rbind(x_syn_list[[j]], x_syn_step)
+    }
   }
 
-  x_new <- rbind(
-    x_syn,
-    x_pos,
-    x_neg
-  )
-  y_new <- c(
-    rep(class_pos, nrow(x_syn) + n_pos),
-    rep(class_neg, n_neg)
-  )
-  y_new <- factor(y_new, levels = levels(y), labels = levels(y))
+  x_syn <- do.call(rbind, x_syn_list)
+  y_syn <- factor(unlist(sapply(1:k_class, function(m) rep(class_names[m], n_needed[m]))), levels = class_names, labels = class_names)
+
+  x_new <- rbind(x, x_syn)
+  y_new <- c(y, y_syn)
   colnames(x_new) <- var_names
 
   return(list(
     x_new = x_new,
     y_new = y_new,
     x_syn = x_syn,
+    y_syn = y_syn,
     C = C
   ))
 }

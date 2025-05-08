@@ -1,7 +1,7 @@
 Package: SMOTEWB
 Type: Package
 Title: Imbalanced Resampling using SMOTE with Boosting (SMOTEWB)
-Version: 1.2.0
+Version: 1.2.1
 Authors@R: 
         c(person("Fatih", "Saglam", email = "saglamf89@gmail.com", 
         role = c("aut", "cre"), 
