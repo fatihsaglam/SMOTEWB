@@ -8,6 +8,8 @@
 #' @param h A numeric vector of length one or number of classes in y. If one is
 #' given, all classes will have same shrink factor. If a value is given for each
 #' classes, it will match respectively to \code{levels(y)}. Default is 1.
+#' @param n_needed vector of desired number of synthetic samples for each class.
+#' A vector of integers for each class. Default is NULL meaning full balance.
 #'
 #' @details
 #' Randomly Over Sampling Examples (ROSE) (Menardi and Torelli, 2014) is an
@@ -51,7 +53,8 @@
 ROSE <- function(
     x,
     y,
-    h = 1) {
+    h = 1,
+    n_needed = NULL) {
 
   if (!is.data.frame(x) & !is.matrix(x)) {
     stop("x must be a matrix or dataframe")
@@ -78,16 +81,21 @@ ROSE <- function(
   n <- length(y)
   p <- ncol(x)
 
-  class_names <- as.character(unique(y))
+  class_names <- as.character(levels(y))
   k_class <- length(class_names)
 
   x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
   n_classes <- sapply(class_names, function(m) sum(y == m))
 
-  n_classes_new <- rep(round(n/k_class), k_class)
+  if (is.null(n_needed)) {
+    n_needed <- rep(round(n/k_class), k_class)
+  }
+  if (length(n_needed) != k_class) {
+    stop("n_needed must be an integer vector matching the number of classes.")
+  }
 
-  i_new_classes <- sapply(1:k_class, function(m) {
-    sample(1:n_classes[m], n_classes_new[m], replace = TRUE)
+  i_new_classes <- lapply(1:k_class, function(m) {
+    sample(1:n_classes[m], n_needed[m], replace = TRUE)
   })
 
   cons_kernel_classes <- sapply(n_classes, function(m) {
@@ -111,23 +119,25 @@ ROSE <- function(
   })
 
   x_noise_classes <- lapply(1:k_class, function(m) {
-    matrix(rnorm(n_classes_new[m]*p), n_classes_new[m], p) %*% H_classes[[m]]
+    matrix(rnorm(n_needed[m]*p), n_needed[m], p) %*% H_classes[[m]]
   })
 
   x_new_classes <- lapply(1:k_class, function(m) {
-    x_noise_classes[[m]] + x_classes[[m]][i_new_classes[,m],,drop = FALSE]
+    x_noise_classes[[m]] + x_classes[[m]][i_new_classes[[m]],,drop = FALSE]
   })
 
   x_new <- do.call(rbind, x_new_classes)
 
-  y_new <- factor(c(sapply(1:k_class, function(m) {
-    rep(class_names[m], n_classes_new[m])
+  y_new <- factor(unlist(sapply(1:k_class, function(m) {
+    rep(class_names[m], n_needed[m])
   })), levels = class_names, labels = class_names)
 
   colnames(x_new) <- var_names
 
   return(list(
     x_new = x_new,
-    y_new = y_new
+    y_new = y_new,
+    x_syn = x_new,
+    y_syn = y_new
   ))
 }

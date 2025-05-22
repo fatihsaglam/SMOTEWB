@@ -46,7 +46,6 @@
 #' trough noise detection and the boosting procedure. Expert Systems with
 #' Applications, 200, 117023.
 #'
-#' Can work with 2 classes only yet.
 #' @examples
 #'
 #' set.seed(1)
@@ -91,13 +90,16 @@ SMOTEWB <- function(
   n <- length(y)
   p <- ncol(x)
 
-  class_names <- as.character(unique(y))
+  class_names <- as.character(levels(y))
   n_classes <- sapply(class_names, function(m) sum(y == m))
   k_class <- length(class_names)
   x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
 
   if (is.null(n_needed)) {
     n_needed <- max(n_classes) - n_classes
+  }
+  if (length(n_needed) != k_class) {
+    stop("n_needed must be an integer vector matching the number of classes.")
   }
 
   x_syn <- matrix(NA, nrow = 0, ncol = p)

@@ -5,6 +5,8 @@
 #' @param x feature matrix.
 #' @param y a factor class variable with two classes.
 #' @param k number of neighbors. Default is 5.
+#' @param n_needed vector of desired number of synthetic samples for each class.
+#' A vector of integers for each class. Default is NULL meaning full balance.
 #'
 #' @details
 #' SMOTE (Chawla et al., 2002) is an oversampling method which creates links
@@ -52,7 +54,7 @@
 #' @rdname SMOTE
 #' @export
 
-SMOTE <- function(x, y, k = 5) {
+SMOTE <- function(x, y, k = 5, n_needed = NULL) {
 
   if (!is.data.frame(x) & !is.matrix(x)) {
     stop("x must be a matrix or dataframe")
@@ -83,7 +85,12 @@ SMOTE <- function(x, y, k = 5) {
   n_classes <- sapply(class_names, function(m) sum(y == m))
   k_class <- length(class_names)
   n_classes_max <- max(n_classes)
-  n_needed <- n_classes_max - n_classes
+  if (is.null(n_needed)) {
+    n_needed <- max(n_classes) - n_classes
+  }
+  if (length(n_needed) != k_class) {
+    stop("n_needed must be an integer vector matching the number of classes.")
+  }
   x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
   x_syn_list <- list()
 

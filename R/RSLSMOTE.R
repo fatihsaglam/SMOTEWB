@@ -10,6 +10,8 @@
 #' @param y a factor class variable with two classes.
 #' @param k1 number of neighbors to link. Default is 5.
 #' @param k2 number of neighbors to determine safe levels. Default is 5.
+#' @param n_needed vector of desired number of synthetic samples for each class.
+#' A vector of integers for each class. Default is NULL meaning full balance.
 #'
 #' @details
 #' In Safe-level SMOTE (SLS), a safe-level threshold is used to control the number of synthetic
@@ -70,7 +72,7 @@
 #' @rdname RSLSMOTE
 #' @export
 
-RSLSMOTE <- function(x, y, k1 = 5, k2 = 5) {
+RSLSMOTE <- function(x, y, k1 = 5, k2 = 5, n_needed = NULL) {
 
   if (!is.data.frame(x) & !is.matrix(x)) {
     stop("x must be a matrix or dataframe")
@@ -104,127 +106,49 @@ RSLSMOTE <- function(x, y, k1 = 5, k2 = 5) {
   x <- as.matrix(x)
   p <- ncol(x)
 
-  class_names <- as.character(unique(y))
-  class_pos <- names(which.min(table(y)))
-  class_neg <- class_names[class_names != class_pos]
+  class_names <- as.character(levels(y))
+  n_classes <- sapply(class_names, function(m) sum(y == m))
+  k_class <- length(class_names)
+  x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
 
-  x_pos <- x[y == class_pos,,drop = FALSE]
-  x_neg <- x[y == class_neg,,drop = FALSE]
-
-  n_pos <- nrow(x_pos)
-  n_neg <- nrow(x_neg)
-
-  x <- rbind(x_pos, x_neg)
-
-  nn_pos2all <- FNN::knnx.index(data = x, query = x_pos, k = k2 + 1)[,-1]
-  nn_pos2pos <- FNN::knnx.index(data = x_pos, query = x_pos, k = k1 + 1)[,-1]
-  nn_pos2all_classcounts <- cbind(
-    rowSums(nn_pos2all <= n_pos),
-    rowSums(nn_pos2all > n_pos)
-  )
-
-  safe_levels <- nn_pos2all_classcounts[,1]
-  i_safe <- which(safe_levels > 0)
-  x_pos_safe <- x_pos[i_safe,,drop = FALSE]
-  n_safe <- nrow(x_pos_safe)
-  n_syn <- (n_neg - n_pos)
-  C <- rep(0, n_pos)
-  C[i_safe] <- rep(ceiling(n_syn/n_safe) - 1, n_safe)
-
-  n_diff <- (n_syn - sum(C))
-  ii <- sample(1:n_safe, size = abs(n_diff))
-  C[i_safe][ii] <- C[i_safe][ii]  + n_diff/abs(n_diff)
-
-  x_syn <- matrix(nrow = 0, ncol = p)
-
-  for (i in 1:n_pos) {
-    if (safe_levels[i] > 0 & C[i] > 0) {
-      i_k <- sample(1:k1, C[i], replace = TRUE)
-      i_nn_pos2pos <- nn_pos2pos[i, i_k]
-      i_nn <- nn_pos2all[c(1, i_nn_pos2pos),]
-      i_nn_neg <- unique(i_nn[i_nn > n_pos])
-      k_safe_levels <- safe_levels[i_nn_pos2pos]
-      r <- rep(0, C[i])
-      for (j in 1:C[i]) {
-        if (k_safe_levels[j] == 0) {
-          r[j] <- 0
-        } else if (k_safe_levels[j] == safe_levels[i]) {
-          r[j] <- runif(1, 0, 1)
-        } else if (k_safe_levels[j] < safe_levels[i]) {
-          r[j] <- runif(1, 0, k_safe_levels[j]/safe_levels[i])
-        } else {
-          r[j] <- runif(1, 1 - safe_levels[i]/k_safe_levels[j], 1)
-        }
-      }
-      x_pos_step <- x_pos[rep(i, C[i]),,drop = FALSE]
-      x_pos_k <- x_pos[i_nn_pos2pos,,drop = FALSE]
-      x_syn_step <- x_pos_step + (x_pos_k - x_pos_step)*r
-
-      if (length(i_nn_neg) > 0) {
-        for (j in 1:C[i]) {
-
-          x_syn_vs_pos_vs_nn <- rbind(
-            x_syn_step[j,],
-            x_pos[i,],
-            x_pos[i_nn_pos2pos[j],]
-          )
-          dist_syn_vs_pos_vs_nn <- Rfast::Dist(x_syn_vs_pos_vs_nn)
-          min_dist <- min(dist_syn_vs_pos_vs_nn[row(dist_syn_vs_pos_vs_nn) != col(dist_syn_vs_pos_vs_nn)])
-          x_syn_vs_nn_neg <- rbind(
-            x_syn_step[j,],
-            x[i_nn_neg,]
-          )
-
-          dist_syn_vs_nn_neg <- Rfast::Dist(x_syn_vs_nn_neg)[1,-1]
-          while (any(dist_syn_vs_nn_neg < min_dist)) {
-
-            if (safe_levels[i] >= k_safe_levels[j]) {
-              x_start <- x_pos[i,]
-              x_end <- x_syn_step[j,]
-            } else {
-              x_start <- x_syn_step[j,]
-              x_end <- x_pos[i_nn_pos2pos[j],]
-            }
-            r <- runif(1)
-            x_syn_step[j,] <- x_start + r*(x_end - x_start)
-            x_syn_vs_pos_vs_nn <- rbind(
-              x_syn_step[j,],
-              x_pos[i,],
-              x_pos[i_nn_pos2pos[j],]
-            )
-
-            dist_syn_vs_pos_vs_nn <- Rfast::Dist(x_syn_vs_pos_vs_nn)
-            min_dist <- min(dist_syn_vs_pos_vs_nn[row(dist_syn_vs_pos_vs_nn) != col(dist_syn_vs_pos_vs_nn)])
-
-            x_syn_vs_nn_neg <- rbind(
-              x_syn_step[j,],
-              x[i_nn_neg,]
-            )
-
-            dist_syn_vs_nn_neg <- Rfast::Dist(x_syn_vs_nn_neg)[1,-1]
-          }
-        }
-      }
-      x_syn <- rbind(x_syn, x_syn_step)
-    }
+  if (is.null(n_needed)) {
+    n_needed <- max(n_classes) - n_classes
+  }
+  if (length(n_needed) != k_class) {
+    stop("n_needed must be an integer vector matching the number of classes.")
   }
 
-  x_new <- rbind(
-    x_syn,
-    x_pos,
-    x_neg
-  )
-  y_new <- c(
-    rep(class_pos, n_syn + n_pos),
-    rep(class_neg, n_neg)
-  )
-  y_new <- factor(y_new, levels = levels(y), labels = levels(y))
+  x_syn <- matrix(NA, nrow = 0, ncol = p)
+  y_syn <- factor(c(), levels = class_names)
+  C <- list()
+
+  for (j in 1:k_class) {
+    m_syn <- generateRSLSMOTE(
+      x_pos = x_classes[[j]],
+      x_neg = do.call(rbind, x_classes[-j]),
+      n_syn = n_needed[j],
+      k1 = k1,
+      k2 = k2,
+      class_pos = class_names[j],
+      class_names = class_names
+    )
+
+    x_syn <- rbind(x_syn, m_syn$x_syn)
+    y_syn <- c(y_syn, m_syn$y_syn)
+
+    C[[j]] <- m_syn$C
+  }
+
+  x_new <- rbind(x, x_syn)
+  y_new <- c(y, y_syn)
   colnames(x_new) <- var_names
+  names(C) <- class_names
 
   return(list(
     x_new = x_new,
     y_new = y_new,
-    x_syn = x_new[1:n_syn,,drop = FALSE],
+    x_syn = x_syn,
+    y_syn = y_syn,
     C = C
   ))
 }

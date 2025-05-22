@@ -4,7 +4,15 @@
 \alias{GSMOTE}
 \title{Geometric Synthetic Minority Oversamplnig Technique (GSMOTE)}
 \usage{
-GSMOTE(x, y, k = 5, alpha_sel = "combined", alpha_trunc = 0.5, alpha_def = 0.5)
+GSMOTE(
+  x,
+  y,
+  k = 5,
+  alpha_sel = "combined",
+  alpha_trunc = 0.5,
+  alpha_def = 0.5,
+  n_needed = NULL
+)
 }
 \arguments{
 \item{x}{feature matrix.}
@@ -21,6 +29,9 @@ Default is 0.5.}
 
 \item{alpha_def}{deformation factor. A numeric value in \eqn{[0,1]}.
 Default is 0.5}
+
+\item{n_needed}{vector of desired number of synthetic samples for each class.
+A vector of integers for each class. Default is NULL meaning full balance.}
 }
 \value{
 a list with resampled dataset.

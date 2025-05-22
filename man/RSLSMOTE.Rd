@@ -4,7 +4,7 @@
 \alias{RSLSMOTE}
 \title{Relocating safe-level SMOTE with minority outcast handling}
 \usage{
-RSLSMOTE(x, y, k1 = 5, k2 = 5)
+RSLSMOTE(x, y, k1 = 5, k2 = 5, n_needed = NULL)
 }
 \arguments{
 \item{x}{feature matrix or data.frame.}
@@ -14,6 +14,9 @@ RSLSMOTE(x, y, k1 = 5, k2 = 5)
 \item{k1}{number of neighbors to link. Default is 5.}
 
 \item{k2}{number of neighbors to determine safe levels. Default is 5.}
+
+\item{n_needed}{vector of desired number of synthetic samples for each class.
+A vector of integers for each class. Default is NULL meaning full balance.}
 }
 \value{
 a list with resampled dataset.

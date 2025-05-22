@@ -9,6 +9,8 @@
 #' @param k1 number of neighbors to link. Default is 5.
 #' @param k2 number of neighbors to determine safe levels. Default is 5.
 #' @param type "type1" or "type2". Default is "type1".
+#' @param n_needed vector of desired number of synthetic samples for each class.
+#' A vector of integers for each class. Default is NULL meaning full balance.
 #'
 #' @details
 #' BLSMOTE works by focusing on the instances that are near the decision
@@ -56,7 +58,7 @@
 #' @rdname BLSMOTE
 #' @export
 
-BLSMOTE <- function(x, y, k1 = 5, k2 = 5, type = "type1") {
+BLSMOTE <- function(x, y, k1 = 5, k2 = 5, type = "type1", n_needed = NULL) {
 
   if (!is.data.frame(x) & !is.matrix(x)) {
     stop("x must be a matrix or dataframe")
@@ -91,14 +93,18 @@ BLSMOTE <- function(x, y, k1 = 5, k2 = 5, type = "type1") {
   x <- as.matrix(x)
   p <- ncol(x)
 
-  class_names <- as.character(unique(y))
+  class_names <- as.character(levels(y))
   n_classes <- sapply(class_names, function(m) sum(y == m))
   k_class <- length(class_names)
   x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
 
-  n_needed <- max(n_classes) - n_classes
+  if (is.null(n_needed)) {
+    n_needed <- max(n_classes) - n_classes
+  }
+  if (length(n_needed) != k_class) {
+    stop("n_needed must be an integer vector matching the number of classes.")
+  }
   x_syn_list <- list()
-
 
   for (j in 1:k_class) {
     x_syn_list[[j]] <- matrix(nrow = 0, ncol = p)

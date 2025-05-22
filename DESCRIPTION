@@ -1,7 +1,7 @@
 Package: SMOTEWB
 Type: Package
 Title: Imbalanced Resampling using SMOTE with Boosting (SMOTEWB)
-Version: 1.2.1
+Version: 1.2.2
 Authors@R: 
         c(person("Fatih", "Saglam", email = "saglamf89@gmail.com", 
         role = c("aut", "cre"), 
@@ -14,7 +14,7 @@ Description: Provides the SMOTE with Boosting (SMOTEWB) algorithm. See
       for each sample. It is robust to noise and outperforms most of the 
       alternatives according to Matthew Correlation Coefficient metric.
       Alternative resampling methods are also available in the package.
-Depends: R (>= 4.2)
+Depends: R (>= 4.4)
 Imports: 
       stats,
       FNN,

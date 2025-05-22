@@ -4,12 +4,15 @@
 \alias{RWO}
 \title{Random Walk Oversampling (SMOTE)}
 \usage{
-RWO(x, y)
+RWO(x, y, n_needed = NULL)
 }
 \arguments{
 \item{x}{feature matrix.}
 
 \item{y}{a factor class variable with two classes.}
+
+\item{n_needed}{vector of desired number of synthetic samples for each class.
+A vector of integers for each class. Default is NULL meaning full balance.}
 }
 \value{
 a list with resampled dataset.

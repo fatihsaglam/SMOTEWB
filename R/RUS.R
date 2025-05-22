@@ -4,6 +4,9 @@
 #'
 #' @param x feature matrix.
 #' @param y a factor class variable with two classes.
+#' @param n_neededToRemove vector of desired number removal for each class.
+#' A vector of integers for each class. Default is NULL meaning full balance.
+#' Must be equal or lower than the number of samples in each class.
 #'
 #' @details
 #' Random Undersampling (RUS) is a method of removing negative
@@ -35,7 +38,7 @@
 #' @rdname RUS
 #' @export
 
-RUS <- function(x, y) {
+RUS <- function(x, y, n_neededToRemove = NULL) {
   x <- as.matrix(x)
 
   if (is.data.frame(x)) {
@@ -59,7 +62,17 @@ RUS <- function(x, y) {
   n_classes <- sapply(class_names, function(m) sum(y == m))
   k_class <- length(class_names)
   n_classes_min <- min(n_classes)
-  n_neededToRemove <- n_classes - n_classes_min
+
+  if (is.null(n_neededToRemove)) {
+    n_neededToRemove <- n_classes - n_classes_min
+  }
+  if (length(n_neededToRemove) != k_class) {
+    stop("n_needed must be an integer vector matching the number of classes.")
+  }
+  if (any(n_neededToRemove > n_classes)) {
+    stop("number of removal cannot be higher than the number of classses")
+  }
+
   x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
   y_classes <- lapply(class_names, function(m) y[y == m])
 
