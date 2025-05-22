@@ -54,7 +54,7 @@ minority class instances. This relocation vector is used to move the
 synthetic data point towards the minority class distribution in the feature
 space.
 
-Note: Much faster than \code{smotefamily::RSLS()}.
+Can work with classes more than 2.
 }
 \examples{
 

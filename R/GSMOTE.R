@@ -19,9 +19,7 @@
 #' samples geometrically around selected minority samples. Details are in the
 #' paper (Douzas & Bacao, 2019).
 #'
-#'
-#' NOTE: Can not work with classes more than 2. Only numerical variables are
-#' allowed.
+#' Can work with classes more than 2.
 #'
 #' @return a list with resampled dataset.
 #'  \item{x_new}{Resampled feature matrix.}

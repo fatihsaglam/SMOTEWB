@@ -34,8 +34,6 @@ minority class (He et al., 2008). In contrast to SMOTE, ADASYN adaptively genera
 examples by focusing on the minority class examples that are harder to
 learn, meaning those examples that are closer to the decision boundary.
 
-Note: Much faster than \code{smotefamily::ADAS()}.
-
 Can work with classes more than 2.
 }
 \examples{

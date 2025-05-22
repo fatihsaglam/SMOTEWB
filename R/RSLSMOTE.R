@@ -35,7 +35,7 @@
 #' synthetic data point towards the minority class distribution in the feature
 #' space.
 #'
-#' Note: Much faster than \code{smotefamily::RSLS()}.
+#' Can work with classes more than 2.
 #'
 #' @return a list with resampled dataset.
 #'  \item{x_new}{Resampled feature matrix.}

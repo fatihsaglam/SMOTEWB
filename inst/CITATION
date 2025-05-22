@@ -9,7 +9,6 @@ bibentry(
   year     = "2022",
   volume   = "200",
   pages    = "117023",
-  url      = "https://www.sciencedirect.com/science/article/pii/S0957417422004407",
   doi      = "10.1016/j.eswa.2022.117023",
   textVersion = paste("Sağlam, F., & Cengiz, M. A. (2022). A novel SMOTE-based resampling technique trough noise detection and the boosting procedure. Expert Systems with Applications, 200, 117023, https://doi.org/10.1016/j.eswa.2022.117023"
   )

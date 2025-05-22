@@ -19,8 +19,6 @@
 #' challenging for classification, and thus generating synthetic samples in
 #' their vicinity can be more effective than generating them randomly.
 #'
-#' Note: Much faster than \code{smotefamily::BLSMOTE()}.
-#'
 #' Can work with classes more than 2.
 #'
 #' @return a list with resampled dataset.

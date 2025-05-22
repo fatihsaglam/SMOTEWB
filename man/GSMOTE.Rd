@@ -48,9 +48,7 @@ GSMOTE (Douzas & Bacao, 2019) is an oversampling method which creates synthetic
 samples geometrically around selected minority samples. Details are in the
 paper (Douzas & Bacao, 2019).
 
-
-NOTE: Can not work with classes more than 2. Only numerical variables are
-allowed.
+Can work with classes more than 2.
 }
 \examples{
 
