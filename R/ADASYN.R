@@ -135,7 +135,7 @@ ADASYN <- function(x, y, k = 5, n_needed = NULL) {
   }
 
   x_syn <- do.call(rbind, x_syn_list)
-  y_syn <- factor(unlist(sapply(1:k_class, function(m) rep(class_names[m], n_needed[m]))), levels = class_names, labels = class_names)
+  y_syn <- factor(unlist(sapply(1:k_class, function(m) rep(class_names[m], nrow(x_syn_list[[m]])))), levels = class_names, labels = class_names)
 
   x_new <- rbind(x, x_syn)
   y_new <- c(y, y_syn)
