@@ -142,7 +142,7 @@ generateRSLSMOTE <- function(
 
   return(list(
     x_syn = x_syn,
-    y_syn = factor(rep(class_pos, n_syn), class_names),
+    y_syn = factor(rep(class_pos, nrow(x_syn)), class_names),
     C = C
   ))
 }
