@@ -11,8 +11,8 @@
 #' Default is 0.5.
 #' @param alpha_def deformation factor. A numeric value in \eqn{[0,1]}.
 #' Default is 0.5
-#' @param n_needed vector of desired number of synthetic samples for each class.
-#' A vector of integers for each class. Default is NULL meaning full balance.
+#' @param ovRate Oversampling rate multiplied by the difference between maximum
+#' and other of class sizes. Default is 1 meaning full balance.
 #'
 #' @details
 #' GSMOTE (Douzas & Bacao, 2019) is an oversampling method which creates synthetic
@@ -62,7 +62,7 @@ GSMOTE <-
            alpha_sel = "combined",
            alpha_trunc = 0.5,
            alpha_def = 0.5,
-           n_needed = NULL) {
+           ovRate = 1) {
 
     match.arg(alpha_sel, c("minority", "majority", "combined"))
 
@@ -99,12 +99,8 @@ GSMOTE <-
     k_class <- length(class_names)
     x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
 
-    if (is.null(n_needed)) {
-      n_needed <- max(n_classes) - n_classes
-    }
-    if (length(n_needed) != k_class) {
-      stop("n_needed must be an integer vector matching the number of classes.")
-    }
+    n_needed <- round((max(n_classes) - n_classes)*ovRate)
+
     x_syn_list <- list()
 
     x_syn <- matrix(NA, nrow = 0, ncol = p)

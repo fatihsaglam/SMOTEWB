@@ -4,7 +4,7 @@
 \alias{SMOTE}
 \title{Synthetic Minority Oversampling Technique (SMOTE)}
 \usage{
-SMOTE(x, y, k = 5, n_needed = NULL)
+SMOTE(x, y, k = 5, ovRate = 1)
 }
 \arguments{
 \item{x}{feature matrix.}
@@ -13,8 +13,8 @@ SMOTE(x, y, k = 5, n_needed = NULL)
 
 \item{k}{number of neighbors. Default is 5.}
 
-\item{n_needed}{vector of desired number of synthetic samples for each class.
-A vector of integers for each class. Default is NULL meaning full balance.}
+\item{ovRate}{Oversampling rate multiplied by the difference between maximum
+and other of class sizes. Default is 1 meaning full balance.}
 }
 \value{
 a list with resampled dataset.

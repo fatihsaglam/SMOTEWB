@@ -4,8 +4,8 @@
 #'
 #' @param x feature matrix.
 #' @param y a factor class variable with two classes.
-#' @param n_needed vector of desired number of synthetic samples for each class.
-#' A vector of integers for each class. Default is NULL meaning full balance.
+#' @param ovRate Oversampling rate multiplied by the difference between maximum
+#' and other of class sizes. Default is 1 meaning full balance.
 #'
 #' @details
 #' RWO (Zhang and Li, 2014) is an oversampling method which generates data using
@@ -45,7 +45,8 @@
 #' @rdname RWO
 #' @export
 
-RWO <- function(x, y, n_needed = NULL) {
+RWO <- function(x, y,
+                ovRate = 1) {
 
   if (!is.data.frame(x) & !is.matrix(x)) {
     stop("x must be a matrix or dataframe")
@@ -67,12 +68,8 @@ RWO <- function(x, y, n_needed = NULL) {
   n_classes <- sapply(class_names, function(m) sum(y == m))
   k_class <- length(class_names)
   n_classes_max <- max(n_classes)
-  if (is.null(n_needed)) {
-    n_needed <- max(n_classes) - n_classes
-  }
-  if (length(n_needed) != k_class) {
-    stop("n_needed must be an integer vector matching the number of classes.")
-  }
+  n_needed <- round((max(n_classes) - n_classes)*ovRate)
+
   x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
   x_syn_list <- list()
 

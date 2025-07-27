@@ -11,8 +11,8 @@
 #' positive and \eqn{2\times n_{pos}/n} for negative class.
 #' @param k_max to increase maximum number of neighbors. Default is
 #' \code{ceiling(n_neg/n_pos)}.
-#' @param n_needed vector of desired number of synthetic samples for each class.
-#' A vector of integers for each class. Default is NULL meaning full balance.
+#' @param ovRate Oversampling rate multiplied by the difference between maximum
+#' and other of class sizes. Default is 1 meaning full balance.
 #' @param ... additional inputs for ada::ada().
 #'
 #' @details
@@ -60,7 +60,6 @@
 #'
 #' plot(m$x_new, col = m$y_new)
 #'
-#'
 #' @rdname SMOTEWB
 #' @export
 
@@ -70,7 +69,7 @@ SMOTEWB <- function(
     n_weak_classifier = 100,
     class_weights = NULL,
     k_max = NULL,
-    n_needed = NULL,
+    ovRate = 1,
     ...) {
 
   if (!is.data.frame(x) & !is.matrix(x)) {
@@ -95,12 +94,7 @@ SMOTEWB <- function(
   k_class <- length(class_names)
   x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
 
-  if (is.null(n_needed)) {
-    n_needed <- max(n_classes) - n_classes
-  }
-  if (length(n_needed) != k_class) {
-    stop("n_needed must be an integer vector matching the number of classes.")
-  }
+  n_needed <- round((max(n_classes) - n_classes)*ovRate)
 
   x_syn <- matrix(NA, nrow = 0, ncol = p)
   y_syn <- factor(c(), levels = class_names)

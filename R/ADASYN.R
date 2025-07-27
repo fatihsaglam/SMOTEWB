@@ -6,8 +6,8 @@
 #' @param x feature matrix or data.frame.
 #' @param y a factor class variable with two classes.
 #' @param k number of neighbors. Default is 5.
-#' @param n_needed vector of desired number of synthetic samples for each class.
-#' A vector of integers for each class. Default is NULL meaning full balance.
+#' @param ovRate Oversampling rate multiplied by the difference between maximum
+#' and other of class sizes. Default is 1 meaning full balance.
 #'
 #' @details
 #' Adaptive Synthetic Sampling (ADASYN) is an extension of the Synthetic Minority Over-sampling Technique
@@ -53,7 +53,7 @@
 #' @rdname ADASYN
 #' @export
 
-ADASYN <- function(x, y, k = 5, n_needed = NULL) {
+ADASYN <- function(x, y, k = 5, ovRate = 1) {
 
   if (!is.data.frame(x) & !is.matrix(x)) {
     stop("x must be a matrix or dataframe")
@@ -84,12 +84,7 @@ ADASYN <- function(x, y, k = 5, n_needed = NULL) {
   k_class <- length(class_names)
   x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
 
-  if (is.null(n_needed)) {
-    n_needed <- max(n_classes) - n_classes
-  }
-  if (length(n_needed) != k_class) {
-    stop("n_needed must be an integer vector matching the number of classes.")
-  }
+  n_needed <- round((max(n_classes) - n_classes)*ovRate)
 
   x_syn_list <- list()
 

@@ -10,8 +10,8 @@
 #' @param y a factor class variable with two classes.
 #' @param k1 number of neighbors to link. Default is 5.
 #' @param k2 number of neighbors to determine safe levels. Default is 5.
-#' @param n_needed vector of desired number of synthetic samples for each class.
-#' A vector of integers for each class. Default is NULL meaning full balance.
+#' @param ovRate Oversampling rate multiplied by the difference between maximum
+#' and other of class sizes. Default is 1 meaning full balance.
 #'
 #' @details
 #' In Safe-level SMOTE (SLS), a safe-level threshold is used to control the number of synthetic
@@ -72,7 +72,8 @@
 #' @rdname RSLSMOTE
 #' @export
 
-RSLSMOTE <- function(x, y, k1 = 5, k2 = 5, n_needed = NULL) {
+RSLSMOTE <- function(x, y, k1 = 5, k2 = 5,
+                     ovRate = 1) {
 
   if (!is.data.frame(x) & !is.matrix(x)) {
     stop("x must be a matrix or dataframe")
@@ -111,12 +112,8 @@ RSLSMOTE <- function(x, y, k1 = 5, k2 = 5, n_needed = NULL) {
   k_class <- length(class_names)
   x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
 
-  if (is.null(n_needed)) {
-    n_needed <- max(n_classes) - n_classes
-  }
-  if (length(n_needed) != k_class) {
-    stop("n_needed must be an integer vector matching the number of classes.")
-  }
+  n_needed <- round((max(n_classes) - n_classes)*ovRate)
+
 
   x_syn <- matrix(NA, nrow = 0, ncol = p)
   y_syn <- factor(c(), levels = class_names)

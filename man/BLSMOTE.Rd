@@ -4,7 +4,7 @@
 \alias{BLSMOTE}
 \title{Borderline Synthetic Minority Oversampling Technique}
 \usage{
-BLSMOTE(x, y, k1 = 5, k2 = 5, type = "type1", n_needed = NULL)
+BLSMOTE(x, y, k1 = 5, k2 = 5, type = "type1", ovRate = 1)
 }
 \arguments{
 \item{x}{feature matrix or data.frame.}
@@ -17,8 +17,8 @@ BLSMOTE(x, y, k1 = 5, k2 = 5, type = "type1", n_needed = NULL)
 
 \item{type}{"type1" or "type2". Default is "type1".}
 
-\item{n_needed}{vector of desired number of synthetic samples for each class.
-A vector of integers for each class. Default is NULL meaning full balance.}
+\item{ovRate}{Oversampling rate multiplied by the difference between maximum
+and other of class sizes. Default is 1 meaning full balance.}
 }
 \value{
 a list with resampled dataset.

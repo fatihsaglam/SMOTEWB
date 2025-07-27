@@ -8,8 +8,8 @@
 #' @param h A numeric vector of length one or number of classes in y. If one is
 #' given, all classes will have same shrink factor. If a value is given for each
 #' classes, it will match respectively to \code{levels(y)}. Default is 1.
-#' @param n_needed vector of desired number of synthetic samples for each class.
-#' A vector of integers for each class. Default is NULL meaning full balance.
+#' @param ovRate Oversampling rate multiplied by the difference between maximum
+#' and other of class sizes. Default is 1 meaning full balance.
 #'
 #' @details
 #' Randomly Over Sampling Examples (ROSE) (Menardi and Torelli, 2014) is an
@@ -54,7 +54,7 @@ ROSE <- function(
     x,
     y,
     h = 1,
-    n_needed = NULL) {
+    ovRate = 1) {
 
   if (!is.data.frame(x) & !is.matrix(x)) {
     stop("x must be a matrix or dataframe")
@@ -87,12 +87,7 @@ ROSE <- function(
   x_classes <- lapply(class_names, function(m) x[y == m,, drop = FALSE])
   n_classes <- sapply(class_names, function(m) sum(y == m))
 
-  if (is.null(n_needed)) {
-    n_needed <- rep(round(n/k_class), k_class)
-  }
-  if (length(n_needed) != k_class) {
-    stop("n_needed must be an integer vector matching the number of classes.")
-  }
+  n_needed <- round((max(n_classes) - n_classes)*ovRate)
 
   i_new_classes <- lapply(1:k_class, function(m) {
     sample(1:n_classes[m], n_needed[m], replace = TRUE)

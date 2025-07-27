@@ -10,7 +10,7 @@ SMOTEWB(
   n_weak_classifier = 100,
   class_weights = NULL,
   k_max = NULL,
-  n_needed = NULL,
+  ovRate = 1,
   ...
 )
 }
@@ -29,8 +29,8 @@ positive and \eqn{2\times n_{pos}/n} for negative class.}
 \item{k_max}{to increase maximum number of neighbors. Default is
 \code{ceiling(n_neg/n_pos)}.}
 
-\item{n_needed}{vector of desired number of synthetic samples for each class.
-A vector of integers for each class. Default is NULL meaning full balance.}
+\item{ovRate}{Oversampling rate multiplied by the difference between maximum
+and other of class sizes. Default is 1 meaning full balance.}
 
 \item{...}{additional inputs for ada::ada().}
 }
@@ -71,7 +71,6 @@ plot(x, col = y)
 m <- SMOTEWB(x = x, y = y, n_weak_classifier = 150)
 
 plot(m$x_new, col = m$y_new)
-
 
 }
 \references{

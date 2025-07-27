@@ -11,7 +11,7 @@ GSMOTE(
   alpha_sel = "combined",
   alpha_trunc = 0.5,
   alpha_def = 0.5,
-  n_needed = NULL
+  ovRate = 1
 )
 }
 \arguments{
@@ -30,8 +30,8 @@ Default is 0.5.}
 \item{alpha_def}{deformation factor. A numeric value in \eqn{[0,1]}.
 Default is 0.5}
 
-\item{n_needed}{vector of desired number of synthetic samples for each class.
-A vector of integers for each class. Default is NULL meaning full balance.}
+\item{ovRate}{Oversampling rate multiplied by the difference between maximum
+and other of class sizes. Default is 1 meaning full balance.}
 }
 \value{
 a list with resampled dataset.
