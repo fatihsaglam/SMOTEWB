@@ -121,18 +121,20 @@ ROSE <- function(
     x_noise_classes[[m]] + x_classes[[m]][i_new_classes[[m]],,drop = FALSE]
   })
 
-  x_new <- do.call(rbind, x_new_classes)
+  x_syn <- do.call(rbind, x_new_classes)
+  x_new <- rbind(x, x_syn)
 
-  y_new <- factor(unlist(sapply(1:k_class, function(m) {
+  y_syn <- factor(unlist(sapply(1:k_class, function(m) {
     rep(class_names[m], n_needed[m])
   })), levels = class_names, labels = class_names)
+  y_new <- c(y, y_syn)
 
   colnames(x_new) <- var_names
 
   return(list(
     x_new = x_new,
     y_new = y_new,
-    x_syn = x_new,
-    y_syn = y_new
+    x_syn = x_syn,
+    y_syn = y_syn
   ))
 }
