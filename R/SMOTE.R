@@ -7,6 +7,7 @@
 #' @param k number of neighbors. Default is 5.
 #' @param ovRate Oversampling rate multiplied by the difference between maximum
 #' and other of class sizes. Default is 1 meaning full balance.
+#' @param ... not used.
 #'
 #' @details
 #' SMOTE (Chawla et al., 2002) is an oversampling method which creates links
@@ -55,7 +56,7 @@
 #' @export
 
 SMOTE <- function(x, y, k = 5,
-                  ovRate = 1) {
+                  ovRate = 1, ...) {
 
   if (!is.data.frame(x) & !is.matrix(x)) {
     stop("x must be a matrix or dataframe")

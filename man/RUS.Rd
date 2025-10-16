@@ -4,7 +4,7 @@
 \alias{RUS}
 \title{Random Undersampling (RUS)}
 \usage{
-RUS(x, y, n_neededToRemove = NULL)
+RUS(x, y, n_neededToRemove = NULL, ...)
 }
 \arguments{
 \item{x}{feature matrix.}
@@ -14,6 +14,8 @@ RUS(x, y, n_neededToRemove = NULL)
 \item{n_neededToRemove}{vector of desired number removal for each class.
 A vector of integers for each class. Default is NULL meaning full balance.
 Must be equal or lower than the number of samples in each class.}
+
+\item{...}{not used.}
 }
 \value{
 a list with resampled dataset.

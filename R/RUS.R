@@ -7,6 +7,7 @@
 #' @param n_neededToRemove vector of desired number removal for each class.
 #' A vector of integers for each class. Default is NULL meaning full balance.
 #' Must be equal or lower than the number of samples in each class.
+#' @param ... not used.
 #'
 #' @details
 #' Random Undersampling (RUS) is a method of removing negative
@@ -38,7 +39,7 @@
 #' @rdname RUS
 #' @export
 
-RUS <- function(x, y, n_neededToRemove = NULL) {
+RUS <- function(x, y, n_neededToRemove = NULL, ...) {
   x <- as.matrix(x)
 
   if (is.data.frame(x)) {

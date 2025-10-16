@@ -4,7 +4,7 @@
 \alias{SMOTE}
 \title{Synthetic Minority Oversampling Technique (SMOTE)}
 \usage{
-SMOTE(x, y, k = 5, ovRate = 1)
+SMOTE(x, y, k = 5, ovRate = 1, ...)
 }
 \arguments{
 \item{x}{feature matrix.}
@@ -15,6 +15,8 @@ SMOTE(x, y, k = 5, ovRate = 1)
 
 \item{ovRate}{Oversampling rate multiplied by the difference between maximum
 and other of class sizes. Default is 1 meaning full balance.}
+
+\item{...}{not used.}
 }
 \value{
 a list with resampled dataset.

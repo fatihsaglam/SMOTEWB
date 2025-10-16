@@ -4,7 +4,7 @@
 \alias{ROS}
 \title{Random Oversampling (ROS)}
 \usage{
-ROS(x, y, ovRate = 1)
+ROS(x, y, ovRate = 1, ...)
 }
 \arguments{
 \item{x}{feature matrix.}
@@ -13,6 +13,8 @@ ROS(x, y, ovRate = 1)
 
 \item{ovRate}{Oversampling rate multiplied by the difference between maximum
 and other of class sizes. Default is 1 meaning full balance.}
+
+\item{...}{not used.}
 }
 \value{
 a list with resampled dataset.

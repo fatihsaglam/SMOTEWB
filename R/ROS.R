@@ -6,7 +6,7 @@
 #' @param y a factor class variable with two classes.
 #' @param ovRate Oversampling rate multiplied by the difference between maximum
 #' and other of class sizes. Default is 1 meaning full balance.
-#'
+#' @param ... not used.
 #' @details
 #' Random Oversampling (ROS) is a method of copying and pasting of positive
 #' samples until balance is achieved.
@@ -37,7 +37,7 @@
 #' @export
 
 
-ROS <- function(x, y, ovRate = 1) {
+ROS <- function(x, y, ovRate = 1, ...) {
 
   if (is.data.frame(x)) {
     x <- as.matrix(x)
