@@ -1,5 +1,9 @@
 [![](https://cranlogs.r-pkg.org/badges/SMOTEWB)](https://cran.r-project.org/package=SMOTEWB)
+<!-- Aylık İndirme Sayısı -->
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/SMOTEWB)](https://pypi.org/project/SMOTEWB/)
 
+<!-- Toplam İndirme Sayısı (pepy.tech servisi üzerinden) -->
+[![Downloads](https://static.pepy.tech/badge/SMOTEWB)](https://pepy.tech/project/SMOTEWB)
 
 
 # SMOTEWB
