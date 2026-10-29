@@ -1,4 +1,3 @@
-[![](https://cranlogs.r-pkg.org/badges/SMOTEWB)](https://cran.r-project.org/package=SMOTEWB)
 [![CRAN status](https://www.r-pkg.org/badges/version/SMOTEWB)](https://CRAN.R-project.org/package=SMOTEWB)
 [![CRAN Total Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SMOTEWB)](https://cran.r-project.org/package=SMOTEWB)
 [![CRAN Monthly Downloads](https://cranlogs.r-pkg.org/badges/SMOTEWB)](https://cran.r-project.org/package=SMOTEWB)
