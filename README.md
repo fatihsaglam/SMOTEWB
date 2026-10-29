@@ -1,10 +1,8 @@
 [![](https://cranlogs.r-pkg.org/badges/SMOTEWB)](https://cran.r-project.org/package=SMOTEWB)
-<!-- Aylık İndirme Sayısı -->
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/SMOTEWB)](https://pypi.org/project/SMOTEWB/)
-
-<!-- Toplam İndirme Sayısı (pepy.tech servisi üzerinden) -->
-[![Downloads](https://static.pepy.tech/badge/SMOTEWB)](https://pepy.tech/project/SMOTEWB)
-
+[![CRAN status](https://www.r-pkg.org/badges/version/SMOTEWB)](https://CRAN.R-project.org/package=SMOTEWB)
+[![CRAN Total Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SMOTEWB)](https://cran.r-project.org/package=SMOTEWB)
+[![CRAN Monthly Downloads](https://cranlogs.r-pkg.org/badges/SMOTEWB)](https://cran.r-project.org/package=SMOTEWB)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 # SMOTEWB
 
