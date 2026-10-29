@@ -1,4 +1,4 @@
-[![](https://cranlogs.r-pkg.org/badges/SMOTEWB)](https://cran.r-project.org/package=SMOTEWB)[![GitHub All Releases](https://shields.io)](https://[github.com](https://github.com/fatihsaglam/SMOTEWB))
+[![](https://cranlogs.r-pkg.org/badges/SMOTEWB)](https://cran.r-project.org/package=SMOTEWB)[![GitHub All Releases](https://shields.io)](https://github.com/fatihsaglam/SMOTEWB)
 
 
 
